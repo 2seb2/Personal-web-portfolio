@@ -1,0 +1,127 @@
+/*
+ * SEBI.dev design tokens — Figma "Sebi Light" / "Sebi Dark" 변수에서 추출 (2026-10-02)
+ * app/globals.css 맨 위에서:  @import "tailwindcss";  @import "../styles/tokens.css";
+ * 테마 전환: next-themes가 <html data-theme="light|dark">를 바꾸면 아래 변수 값만 바뀐다.
+ */
+
+/* ---------- 1. 테마별 원시 값 ---------- */
+:root,
+[data-theme="light"] {
+  --sebi-brand: #F49303;          /* brand/orange       칩 테두리·태그·숫자 강조 (면·선에만) */
+  --sebi-brand-text: #BF5600;     /* brand/orange-text  주황 글자 (흰 배경 대비 4.5:1↑) */
+  --sebi-selected: #BF5600;       /* accent/selected    슬롯에 들어간 키워드 배경 */
+  --sebi-on-selected: #F5F5F2;    /* text/on-selected   선택된 키워드 글자 */
+  --sebi-handle: #FFFFFF;         /* accent/handle      선택 핸들 */
+
+  --sebi-page: #FFFFFF;           /* bg/page */
+  --sebi-surface: #FFFFFF;        /* bg/surface   카드·칩 */
+  --sebi-sunken: #F4F4F5;         /* bg/sunken    썸네일·인용 박스 */
+  --sebi-inverse: #111111;        /* bg/inverse   Nav Pill 배경 */
+
+  --sebi-fg: #111111;             /* text/primary */
+  --sebi-fg-strong: #2A2A2A;      /* text/strong */
+  --sebi-fg-secondary: #666666;   /* text/secondary */
+  --sebi-fg-muted: #8E8E8E;       /* text/muted */
+  --sebi-fg-placeholder: #ADADAD; /* text/placeholder */
+  --sebi-fg-inverse: #FFFFFF;     /* text/inverse  Nav Pill 글자 */
+
+  --sebi-line: #E8E8E8;           /* border/default */
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --sebi-brand: #F49303;
+  --sebi-brand-text: #F49303;
+  --sebi-selected: #F49303;
+  --sebi-on-selected: #141414;
+  --sebi-handle: #FFFFFF;
+
+  --sebi-page: #1A1A1A;
+  --sebi-surface: #242424;
+  --sebi-sunken: #2B2B2B;
+  --sebi-inverse: #F5F5F2;
+
+  --sebi-fg: #F5F5F2;
+  --sebi-fg-strong: #E2E2DE;
+  --sebi-fg-secondary: #A3A3A0;
+  --sebi-fg-muted: #7A7A77;
+  --sebi-fg-placeholder: #6B6B68;
+  --sebi-fg-inverse: #1A1A1A;
+
+  --sebi-line: #363636;
+
+  color-scheme: dark;
+}
+
+/* ---------- 2. Tailwind 테마 연결 ---------- */
+/* inline: 클래스가 var()를 그대로 참조 → data-theme만 바뀌면 색이 따라 바뀜 */
+@theme inline {
+  --color-brand: var(--sebi-brand);
+  --color-brand-text: var(--sebi-brand-text);
+  --color-selected: var(--sebi-selected);
+  --color-on-selected: var(--sebi-on-selected);
+  --color-handle: var(--sebi-handle);
+
+  --color-page: var(--sebi-page);
+  --color-surface: var(--sebi-surface);
+  --color-sunken: var(--sebi-sunken);
+  --color-inverse: var(--sebi-inverse);
+
+  --color-fg: var(--sebi-fg);
+  --color-fg-strong: var(--sebi-fg-strong);
+  --color-fg-secondary: var(--sebi-fg-secondary);
+  --color-fg-muted: var(--sebi-fg-muted);
+  --color-fg-placeholder: var(--sebi-fg-placeholder);
+  --color-fg-inverse: var(--sebi-fg-inverse);
+
+  --color-line: var(--sebi-line);
+
+  /* next/font 변수: app/layout.tsx에서 --font-archivo, --font-plex-mono, --font-pretendard 주입 */
+  --font-sans: var(--font-archivo), var(--font-pretendard), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), var(--font-pretendard), ui-monospace, monospace;
+}
+
+@theme {
+  /* 그림자 (Figma effect styles) */
+  --shadow-sm: 0 2px 10px 0 rgb(22 23 27 / 0.07);   /* shadow/sm  기본 칩·카드 */
+  --shadow-md: 0 8px 22px 0 rgb(22 23 27 / 0.14);   /* shadow/md  호버 */
+
+  /* 모서리 */
+  --radius-pill: 999px;   /* 칩·슬롯·토글 */
+  --radius-card: 14px;    /* 썸네일·아티클 카드 */
+  --radius-card-lg: 24px; /* 프로젝트 카드(호버 배경) */
+  --radius-media: 20px;   /* 상세 대표 이미지 */
+  --radius-next: 16px;    /* 다음 프로젝트 카드 */
+  --radius-img: 12px;     /* 본문 이미지 */
+  --radius-swatch: 10px;
+
+  /* 브레이크포인트: md(48rem=768px)가 모바일 ↔ 데스크톱 경계 (spec 7장). 기본값 사용 */
+}
+
+/* ---------- 3. 글자 스타일 (Figma text styles 18개) ---------- */
+/* 이름 규칙: Figma "display/lg" → 클래스 "type-display-lg" */
+@utility type-display-lg       { font-family: var(--font-sans); font-weight: 800; font-size: 52px; line-height: 57px; letter-spacing: -1.56px; }
+@utility type-display-hero     { font-family: var(--font-sans); font-weight: 500; font-size: 48px; line-height: 82px; letter-spacing: -1.44px; }
+@utility type-display-hero-strong { font-family: var(--font-sans); font-weight: 800; font-size: 48px; line-height: 82px; letter-spacing: -1.44px; }
+@utility type-heading-slot     { font-family: var(--font-sans); font-weight: 700; font-size: 30px; line-height: 51px; letter-spacing: -0.6px; }
+@utility type-heading-lg       { font-family: var(--font-sans); font-weight: 700; font-size: 26px; line-height: 44px; letter-spacing: -0.52px; }
+@utility type-lead             { font-family: var(--font-sans); font-weight: 500; font-size: 24px; line-height: 35px; letter-spacing: -0.48px; }
+@utility type-heading-md       { font-family: var(--font-sans); font-weight: 700; font-size: 22px; line-height: 32px; letter-spacing: -0.44px; }
+@utility type-body-lg          { font-family: var(--font-sans); font-weight: 400; font-size: 19px; line-height: 32px; letter-spacing: -0.16px; }
+@utility type-body-md          { font-family: var(--font-sans); font-weight: 400; font-size: 16px; line-height: 27px; letter-spacing: -0.16px; }
+@utility type-body-md-strong   { font-family: var(--font-sans); font-weight: 700; font-size: 16px; line-height: 27px; letter-spacing: -0.16px; }
+@utility type-label-pill       { font-family: var(--font-sans); font-weight: 600; font-size: 16px; line-height: 28px; letter-spacing: -0.16px; }
+@utility type-body-sm          { font-family: var(--font-sans); font-weight: 400; font-size: 14px; line-height: 24px; letter-spacing: -0.16px; }
+@utility type-body-sm-medium   { font-family: var(--font-sans); font-weight: 500; font-size: 14px; line-height: 24px; letter-spacing: -0.16px; }
+@utility type-body-sm-strong   { font-family: var(--font-sans); font-weight: 700; font-size: 14px; line-height: 24px; letter-spacing: -0.16px; }
+@utility type-label-tag        { font-family: var(--font-sans); font-weight: 500; font-size: 12px; line-height: 16px; letter-spacing: 0; }
+@utility type-mono-label       { font-family: var(--font-mono); font-weight: 500; font-size: 12px; line-height: 20px; letter-spacing: 0.96px; }
+@utility type-mono-sm          { font-family: var(--font-mono); font-weight: 400; font-size: 12px; line-height: 20px; letter-spacing: 0; }
+@utility type-mono-xs          { font-family: var(--font-mono); font-weight: 400; font-size: 11px; line-height: 19px; letter-spacing: 0; }
+
+/* ---------- 4. 전역 기본 ---------- */
+@layer base {
+  html { background: var(--sebi-page); color: var(--sebi-fg); }
+  body { font-family: var(--font-sans); word-break: keep-all; overflow-wrap: anywhere; }
+}
