@@ -29,7 +29,7 @@ export async function generateMetadata({
 
 export default function ProjectDetailPage({ params }: PageProps<'/projects/[slug]'>) {
   return (
-    <div className="mx-auto flex w-full max-w-242 flex-col items-center px-6 pt-12 md:px-14">
+    <div className="mx-auto flex w-full max-w-242 flex-col items-center px-6 pt-12 pb-11 md:px-14">
       <div className="w-full max-w-205">
         <Link href="/projects" className="type-mono-sm text-fg-secondary">
           ← All projects
@@ -75,9 +75,9 @@ async function ProjectDetailContent({
         />
       </div>
 
-      <div className="flex flex-wrap items-start justify-between gap-6 border-t border-b border-line py-6.5 mt-11">
+      <div className="mt-11 grid grid-cols-2 gap-y-6 border-t border-b border-line py-6.5 md:flex md:flex-wrap md:items-start md:justify-between md:gap-6">
         {detail.meta.map((item) => (
-          <div key={item.term} className="flex flex-col">
+          <div key={item.term} className="flex min-w-0 flex-col pr-4 md:pr-0">
             <p className="type-mono-xs text-fg-secondary">{item.term}</p>
             <p className="type-body-sm-medium mt-1.25 text-fg">
               {item.value.map((line, i) => (
