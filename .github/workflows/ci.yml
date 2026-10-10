@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  code-quality:
+    name: Lint, TypeScript & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Check Code Style (ESLint)
+        run: npm run lint
+
+      - name: Check Type Errors (TypeScript)
+        run: npm run typecheck
+
+      - name: Verify Production Build (Next.js)
+        run: npm run build
