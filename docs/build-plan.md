@@ -36,14 +36,31 @@
 ## 2단계 · 정적 페이지
 
 **프롬프트**
-> `lib/`에 getProjects(), getProject(slug), getArticles()를 만들어줘 (지금은 content 파일을 그대로 돌려주고, 아티클은 나중에 노션으로 바꿀 수 있게). 그다음 /projects, /projects/[slug](generateStaticParams, detail이 있는 프로젝트만), /articles를 Figma 화면(140:353, 155:1088, 140:442)대로 만들어줘. detail이 없는 프로젝트 카드는 links.github → links.notion 순서로 새 탭 이동. 이미지 파일이 없으면 bg-sunken 빈 박스로 보여줘. 홈(/)은 Hero Copy의 Empty 상태만 정적으로, 링 칩은 아직 배치하지 마.
+> docs/build-plan.md 2단계를 진행해줘. 1단계 컴포넌트(ProjectCard, Tag, Nav, Footer 등)를 그대로 재사용해.
+>
+> 1. `lib/`에 getProjects(), getProject(slug), getArticles()를 만들어줘. 지금은 content 파일을 그대로 돌려주고, getArticles()는 나중에 노션 API로 내부만 바꿀 수 있게 반환 타입을 고정해.
+> 2. /projects(Figma 140:353), /articles(140:442)를 Figma대로 만들어줘.
+> 3. /projects/[slug]는 Figma 155:1088(라이트)·155:1271(다크)의 지켜줘홈즈 상세를 템플릿으로 삼아 만들어줘. 지금은 4개 프로젝트 모두 detail이 있으니 generateStaticParams로 detail이 있는 프로젝트를 전부 정적 생성해. 나머지 3개는 Figma 화면이 없으니 같은 템플릿과 같은 블록으로 렌더링하면 돼.
+> 4. ProjectSection의 필드(paragraphs, blocks, image, callout, list, note)는 모두 선택이야. 있는 것만 렌더링하고, 없는 필드는 빈 요소나 여백을 남기지 마. 블록 라벨은 '발견·원인·판단·결과·문제·해결'이 섞여 있어. 순서는 데이터 순서 그대로 써.
+> 5. "다음 프로젝트" 카드는 order 기준 다음 프로젝트로 연결하고, 마지막 프로젝트는 첫 번째로 순환해줘.
+> 6. detail이 없는 프로젝트 카드는 links.github → links.notion 순서로 새 탭 이동 (`target="_blank" rel="noopener noreferrer"`). 지금은 해당 카드가 없지만 분기는 남겨 둬.
+> 7. 이미지는 next/image로 width/height를 지정해 CLS가 없게 하고, 이미지를 불러오지 못하면 같은 크기의 bg-sunken 빈 박스로 보여줘.
+> 8. 홈(/)은 Hero Copy의 Empty 상태만 정적으로 보여주고, 링 칩은 아직 배치하지 마.
+> 9. content/의 문구와 `TODO(세비)`, `// 근거:` 주석은 수정하지 마.
+>
+> 작은 기능 단위가 끝날 때마다 추천 커밋을 남겨줘.
 
 **완료 기준**
-- `npm run build`가 모든 페이지를 정적 생성(○/●)으로 출력
-- 상세 페이지의 모든 요소가 820 열 안에 있고 넘치는 글자 없음 (메타 4항목 포함)
-- 상세의 "다음 프로젝트"가 다음 순서의 프로젝트로 연결
+- `npm run build` 출력에서 /, /projects, /articles가 ○, /projects/[slug] 4개가 ●로 나옴
+- 상세 4개 모두 모든 요소가 820 열 안에 있고 넘치는 글자가 없음. 메타 4항목, 특히 Web OS 스택(`Zustand · Socket.IO · Vitest`)이 넘치지 않는지 확인
+- 인용 박스가 없는 섹션(Web OS 1·3번)에 빈 박스나 여백이 남지 않음
+- 다음 프로젝트 순서가 01 → 02 → 03 → 04 → 01
+- `npm run typecheck && npm run lint && npm test` 통과, PR에서 CI 통과
 
-**직접 확인**: 1512 / 1024 / 768 / 390 폭에서 각 페이지를 끝까지 스크롤
+**직접 확인**
+- 1512 / 1024 / 768 / 390 폭에서 각 페이지를 끝까지 스크롤
+- 라이트와 다크를 둘 다 확인
+- 상세 4개를 연달아 열어서, 지켜줘홈즈 말고 다른 프로젝트에서 구성이 어색해지는 곳이 없는지 보기. 거기서 나오는 원고 문제는 따로 메모해 두세요.
 
 ---
 
