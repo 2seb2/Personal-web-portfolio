@@ -37,26 +37,28 @@ Figma `v2 — Design System` 섹션(node `156:1505`)의 요약. 값은 `styles/t
 폰트: **Archivo**(라틴) + **IBM Plex Mono**(라벨·메타) — `next/font/google`.
 한글: Archivo·Plex Mono에 한글 글리프가 없어 **Pretendard Variable**을 대체 폰트로 둔다. Pretendard는 Google Fonts에 없으므로 `npm i pretendard`로 설치하고 `next/font/local`로 `node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2`를 불러와 `--font-pretendard`에 연결한다(경로는 설치 후 확인). Figma 화면의 한글도 대체 폰트로 렌더링된 것.
 
-| Figma 스타일 | 클래스 | 폰트 | 크기/행간 | 자간 | 쓰이는 곳 |
-|---|---|---|---|---|---|
-| display/lg | `type-display-lg` | Archivo 800 | 52/57 | −1.56 | 목록·상세 페이지 제목 |
-| display/hero | `type-display-hero` | Archivo 500 | 48/82 | −1.44 | 히어로 "I'm", 꼬리말 |
-| display/hero-strong | `type-display-hero-strong` | Archivo 800 | 48/82 | −1.44 | 히어로 "세비" |
-| heading/slot | `type-heading-slot` | Archivo 700 | 30/51 | −0.6 | 슬롯 안 글자 |
-| heading/lg | `type-heading-lg` | Archivo 700 | 26/44 | −0.52 | 푸터 제목·이메일 |
-| lead | `type-lead` | Archivo 500 | 24/35 | −0.48 | 히어로 서브 문구 |
-| heading/md | `type-heading-md` | Archivo 700 | 22/32 | −0.44 | 카드 제목, 상세 섹션 제목, 다음 프로젝트 |
-| body/lg | `type-body-lg` | Archivo 400 | 19/32 | −0.16 | 페이지 설명, 상세 요약 |
-| body/md | `type-body-md` | Archivo 400 | 16/27 | −0.16 | 상세 본문, 인용 |
-| body/md-strong | `type-body-md-strong` | Archivo 700 | 16/27 | −0.16 | 발견·원인·판단·결과 라벨 |
-| label/pill | `type-label-pill` | Archivo 600 | 16/28 | −0.16 | 키워드·이동 칩 |
-| body/sm | `type-body-sm` | Archivo 400 | 14/24 | −0.16 | 카드 글머리표, 푸터 안내 |
-| body/sm-medium | `type-body-sm-medium` | Archivo 500 | 14/24 | −0.16 | 내비 링크, 상세 메타 값 |
-| body/sm-strong | `type-body-sm-strong` | Archivo 700 | 14/24 | −0.16 | 카드 글머리표 강조, 아티클 제목 |
-| label/tag | `type-label-tag` | Archivo 500 | 12/16 | 0 | 태그 |
-| mono/label | `type-mono-label` | Plex Mono 500 | 12/20 | 0.96 | 로고, 섹션 라벨 |
-| mono/sm | `type-mono-sm` | Plex Mono 400 | 12/20 | 0 | 내비 이메일, 링크 |
-| mono/xs | `type-mono-xs` | Plex Mono 400 | 11/19 | 0 | 히어로 Eyebrow·힌트, 카드 메타, 날짜, 정리 버튼 |
+| Figma 스타일 | 클래스 | 폰트 | 크기/행간 | 모바일(768px 미만) | 자간 | 쓰이는 곳 |
+|---|---|---|---|---|---|---|
+| display/lg | `type-display-lg` | Archivo 800 | 52/57 | 32/38 | −1.56 | 목록·상세 페이지 제목 |
+| display/hero | `type-display-hero` | Archivo 500 | 48/82 | — (3단계에서 처리) | −1.44 | 히어로 "I'm", 꼬리말 |
+| display/hero-strong | `type-display-hero-strong` | Archivo 800 | 48/82 | — (3단계에서 처리) | −1.44 | 히어로 "세비" |
+| heading/slot | `type-heading-slot` | Archivo 700 | 30/51 | — (3단계에서 처리) | −0.6 | 슬롯 안 글자 |
+| heading/lg | `type-heading-lg` | Archivo 700 | 26/44 | — | −0.52 | 푸터 제목·이메일 |
+| lead | `type-lead` | Archivo 500 | 24/35 | — (3단계에서 처리) | −0.48 | 히어로 서브 문구 |
+| heading/md | `type-heading-md` | Archivo 700 | 22/32 | 20/30 | −0.44 | 카드 제목, 상세 섹션 제목, 다음 프로젝트 |
+| body/lg | `type-body-lg` | Archivo 400 | 19/32 | 17/28 | −0.16 | 페이지 설명, 상세 요약 |
+| body/md | `type-body-md` | Archivo 400 | 16/27 | — | −0.16 | 상세 본문, 인용 |
+| body/md-strong | `type-body-md-strong` | Archivo 700 | 16/27 | — | −0.16 | 발견·원인·판단·결과 라벨 |
+| label/pill | `type-label-pill` | Archivo 600 | 16/28 | — | −0.16 | 키워드·이동 칩 |
+| body/sm | `type-body-sm` | Archivo 400 | 14/24 | — | −0.16 | 카드 글머리표, 푸터 안내 |
+| body/sm-medium | `type-body-sm-medium` | Archivo 500 | 14/24 | — | −0.16 | 내비 링크, 상세 메타 값 |
+| body/sm-strong | `type-body-sm-strong` | Archivo 700 | 14/24 | — | −0.16 | 카드 글머리표 강조, 아티클 제목 |
+| label/tag | `type-label-tag` | Archivo 500 | 12/16 | — | 0 | 태그 |
+| mono/label | `type-mono-label` | Plex Mono 500 | 12/20 | — | 0.96 | 로고, 섹션 라벨 |
+| mono/sm | `type-mono-sm` | Plex Mono 400 | 12/20 | — | 0 | 내비 이메일, 링크 |
+| mono/xs | `type-mono-xs` | Plex Mono 400 | 11/19 | — | 0 | 히어로 Eyebrow·힌트, 카드 메타, 날짜, 정리 버튼 |
+
+모바일 값은 `styles/tokens.css`의 각 `type-*` 유틸리티 안에 `@media (width < 48rem)`로 중첩되어 있어, 해당 클래스를 쓰는 모든 페이지에 동일하게 적용된다. 자간은 모바일에서도 그대로 유지(별도 값 없음).
 
 ---
 

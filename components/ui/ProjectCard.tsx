@@ -3,6 +3,7 @@ import type { Project, RichText } from '@/types/content';
 
 type ProjectCardProps = {
   project: Project;
+  priority?: boolean;
 };
 
 function renderRichText(text: RichText) {
@@ -17,7 +18,7 @@ function renderRichText(text: RichText) {
   );
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+export function ProjectCard({ project, priority = false }: ProjectCardProps) {
   const href = project.detail
     ? `/projects/${project.slug}`
     : (project.links?.github ?? project.links?.notion ?? '#');
@@ -36,6 +37,8 @@ export function ProjectCard({ project }: ProjectCardProps) {
             src={project.thumbnail.src}
             alt={project.thumbnail.alt}
             fill
+            sizes="(min-width: 768px) 469px, 100vw"
+            priority={priority}
             className="object-cover"
           />
         ) : (

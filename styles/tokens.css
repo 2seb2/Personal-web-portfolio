@@ -101,14 +101,17 @@
 
 /* ---------- 3. 글자 스타일 (Figma text styles 18개) ---------- */
 /* 이름 규칙: Figma "display/lg" → 클래스 "type-display-lg" */
-@utility type-display-lg       { font-family: var(--font-sans); font-weight: 800; font-size: 52px; line-height: 57px; letter-spacing: -1.56px; }
+@utility type-display-lg       { font-family: var(--font-sans); font-weight: 800; font-size: 52px; line-height: 57px; letter-spacing: -1.56px;
+  @media (width < 48rem) { font-size: 32px; line-height: 38px; } }
 @utility type-display-hero     { font-family: var(--font-sans); font-weight: 500; font-size: 48px; line-height: 82px; letter-spacing: -1.44px; }
 @utility type-display-hero-strong { font-family: var(--font-sans); font-weight: 800; font-size: 48px; line-height: 82px; letter-spacing: -1.44px; }
 @utility type-heading-slot     { font-family: var(--font-sans); font-weight: 700; font-size: 30px; line-height: 51px; letter-spacing: -0.6px; }
 @utility type-heading-lg       { font-family: var(--font-sans); font-weight: 700; font-size: 26px; line-height: 44px; letter-spacing: -0.52px; }
 @utility type-lead             { font-family: var(--font-sans); font-weight: 500; font-size: 24px; line-height: 35px; letter-spacing: -0.48px; }
-@utility type-heading-md       { font-family: var(--font-sans); font-weight: 700; font-size: 22px; line-height: 32px; letter-spacing: -0.44px; }
-@utility type-body-lg          { font-family: var(--font-sans); font-weight: 400; font-size: 19px; line-height: 32px; letter-spacing: -0.16px; }
+@utility type-heading-md       { font-family: var(--font-sans); font-weight: 700; font-size: 22px; line-height: 32px; letter-spacing: -0.44px;
+  @media (width < 48rem) { font-size: 20px; line-height: 30px; } }
+@utility type-body-lg          { font-family: var(--font-sans); font-weight: 400; font-size: 19px; line-height: 32px; letter-spacing: -0.16px;
+  @media (width < 48rem) { font-size: 17px; line-height: 28px; } }
 @utility type-body-md          { font-family: var(--font-sans); font-weight: 400; font-size: 16px; line-height: 27px; letter-spacing: -0.16px; }
 @utility type-body-md-strong   { font-family: var(--font-sans); font-weight: 700; font-size: 16px; line-height: 27px; letter-spacing: -0.16px; }
 @utility type-label-pill       { font-family: var(--font-sans); font-weight: 600; font-size: 16px; line-height: 28px; letter-spacing: -0.16px; }
