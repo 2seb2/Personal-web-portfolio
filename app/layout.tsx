@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
+import { Nav } from "@/components/layout/Nav";
+import { Footer } from "@/components/layout/Footer";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -42,7 +44,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           enableSystem
           storageKey="sebi-theme"
         >
-          {children}
+          <Nav />
+          <main className="flex flex-1 flex-col">{children}</main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
