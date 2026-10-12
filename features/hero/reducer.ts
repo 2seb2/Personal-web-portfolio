@@ -34,7 +34,9 @@ export type HeroAction =
   /** 정리 버튼 — 자유 배치된 칩을 모두 Home 위치로 되돌린다 */
   | { type: 'TIDY' }
   /** 이동 완료 — Navigating 상태를 정리한다 (실제 페이지 이동은 컴포넌트가 수행) */
-  | { type: 'NAVIGATE_SETTLED' };
+  | { type: 'NAVIGATE_SETTLED' }
+  /** 다른 페이지로 이동했다 뒤로가기 등으로 홈에 돌아옴 → Empty, 모든 칩 Home 위치 (spec 3장) */
+  | { type: 'RESET_ALL' };
 
 function moveToTopOfStack(stack: string[], id: string): string[] {
   return [...stack.filter((stackId) => stackId !== id), id];
@@ -51,8 +53,9 @@ function removeFromPlaced(
 }
 
 export function heroReducer(state: HeroState, action: HeroAction): HeroState {
-  // Navigating 중에는 칩 조작을 모두 무시한다 (spec 3장 "Navigating | 칩 드래그 시도 | 무시")
-  if (state.navigating && action.type !== 'NAVIGATE_SETTLED') {
+  // Navigating 중에는 칩 조작을 모두 무시한다 (spec 3장 "Navigating | 칩 드래그 시도 | 무시").
+  // RESET_ALL은 예외 — 페이지를 떠나는 도중(Navigating)에 뒤로가기로 돌아와도 반드시 Empty가 되어야 한다.
+  if (state.navigating && action.type !== 'NAVIGATE_SETTLED' && action.type !== 'RESET_ALL') {
     return state;
   }
 
@@ -69,8 +72,11 @@ export function heroReducer(state: HeroState, action: HeroAction): HeroState {
     }
 
     case 'PLACE_NAV': {
-      // Empty·Filled + nav 넣기 → Navigating, Ring 숨김
-      return { ...state, navigating: action.id };
+      // Empty·Filled + nav 넣기 → Navigating, Ring 숨김.
+      // 이전에 슬롯에 있던 keyword는 Home 위치로 복귀(자유 배치 기록 제거) — Navigating 중
+      // Headline 슬롯 자리는 nav 라벨이 차지한다(spec 5장 "I'm 세비 [프로젝트 →] 를 구경해봐요")
+      const placed = state.slot ? removeFromPlaced(state.placed, state.slot) : state.placed;
+      return { ...state, slot: null, navigating: action.id, placed };
     }
 
     case 'RESET_SLOT': {
@@ -98,6 +104,10 @@ export function heroReducer(state: HeroState, action: HeroAction): HeroState {
 
     case 'NAVIGATE_SETTLED': {
       return { ...state, navigating: null };
+    }
+
+    case 'RESET_ALL': {
+      return initialHeroState;
     }
 
     default:
