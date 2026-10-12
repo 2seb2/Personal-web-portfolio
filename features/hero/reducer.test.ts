@@ -39,10 +39,16 @@ describe('heroReducer', () => {
     expect(next.navigating).toBe('go-projects');
   });
 
-  it('Filled + nav 넣기 → Navigating', () => {
-    const filled: HeroState = { ...initialHeroState, slot: 'rewrite' };
+  it('Filled + nav 넣기 → Navigating, 슬롯은 비워짐(Navigating 중 Headline 슬롯 자리는 nav가 차지, spec 5장)', () => {
+    const filled: HeroState = {
+      ...initialHeroState,
+      slot: 'rewrite',
+      placed: { rewrite: { x: 0.3, y: 0.4 } },
+    };
     const next = heroReducer(filled, { type: 'PLACE_NAV', id: 'go-articles' });
     expect(next.navigating).toBe('go-articles');
+    expect(next.slot).toBeNull();
+    expect(next.placed).not.toHaveProperty('rewrite');
   });
 
   it('Navigating + 1.2s 경과(NAVIGATE_SETTLED) → navigating 정리 (실제 이동은 컴포넌트가 수행)', () => {
@@ -98,6 +104,23 @@ describe('heroReducer', () => {
 
   it('RESET_SLOT을 Empty 상태에서 호출해도 안전하게 무시된다', () => {
     const next = heroReducer(initialHeroState, { type: 'RESET_SLOT' });
+    expect(next).toEqual(initialHeroState);
+  });
+
+  it('RESET_ALL → 어떤 상태에서든 초기 상태(Empty, 모든 칩 Home 위치)로 돌아간다 (spec 3장 "뒤로가기로 돌아옴")', () => {
+    const messy: HeroState = {
+      slot: 'rewrite',
+      navigating: null,
+      placed: { e2e: { x: 0.1, y: 0.1 } },
+      stack: ['e2e'],
+    };
+    const next = heroReducer(messy, { type: 'RESET_ALL' });
+    expect(next).toEqual(initialHeroState);
+  });
+
+  it('Navigating 중에도 RESET_ALL은 무시되지 않는다 (페이지를 떠나는 도중 뒤로가기로 돌아올 수 있음)', () => {
+    const navigating: HeroState = { ...initialHeroState, navigating: 'go-projects', slot: 'rewrite' };
+    const next = heroReducer(navigating, { type: 'RESET_ALL' });
     expect(next).toEqual(initialHeroState);
   });
 

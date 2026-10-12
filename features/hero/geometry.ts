@@ -11,10 +11,14 @@ export type RingPosition = Point & {
 };
 
 /**
- * 링 배치가 Hero Copy 블록과 겹치지 않는 최소 뷰포트 크기 (spec 7장 결정 로그 2026-10-11).
+ * 링 배치를 쓰는 최소 뷰포트 크기 (spec 7장 결정 로그 2026-10-11).
  * height는 Hero 섹션 높이(Nav 제외) 기준 — 실측 경계(783px)에 여유를 둔 값.
+ * width 1350px: 846px 블록(+칩 반폭)과 거의 겹치지 않으면서 화면 밖으로도 안 나가는
+ * 가장 좁은 폭(실측). 그보다 좁은 폭(1280~1349px)은 수학적으로 "완전 무충돌"이 불가능해
+ * 더 좁히지 않았다 — 어차피 칩·블록 간 약간의 겹침은 허용되므로(7장 충돌 규칙) 1350px는
+ * "거의 안 겹치는" 실용적 하한이다.
  */
-export const MIN_RING_VIEWPORT = { width: 1512, height: 790 };
+export const MIN_RING_VIEWPORT = { width: 1350, height: 790 };
 
 /** 이 폭·높이 조합에서 링 배치(타원 둘레)를 쓸 수 있는지. 아니면 띠 배치를 쓴다 */
 export function canUseRingLayout(viewportWidth: number, viewportHeight: number): boolean {
@@ -73,9 +77,16 @@ export type ComputeRingPositionsParams = {
 };
 
 /**
+ * 반지름 스케일(화면 폭 ÷ 1512)의 하한. 전환 기준(1350px)보다 좁은 쪽으로 scale을 그대로
+ * 줄이면 타원이 846px Hero Copy 블록과 겹치는 지점이 생겨(실측, spec 7장 결정 로그), 안전한
+ * 최소 스케일(0.944, 여유를 더해 0.95)을 하한으로 고정한다.
+ */
+export const MIN_RING_SCALE = 0.95;
+
+/**
  * 각 칩의 링 배치 위치(화면 좌표계, px)를 계산한다. `canUseRingLayout`이 true인
  * 뷰포트에서만 호출한다 — 그보다 좁거나 낮으면 띠 배치(`computeStripLayout`)를 쓴다.
- * - Ring 크기(중심·반지름)는 화면 폭에 비례해 스케일링 (spec 7장)
+ * - Ring 크기(중심·반지름)는 화면 폭에 비례해 스케일링하되 MIN_RING_SCALE 밑으로는 안 줄인다 (spec 7장)
  * - 칩은 Hero Copy 블록이나 다른 칩과 겹쳐도 된다(가림 허용) — 화면 밖으로만 나가지 않도록
  *   반지름 상한을 둔다
  */
@@ -85,7 +96,7 @@ export function computeRingPositions({
   rotations,
 }: ComputeRingPositionsParams): RingPosition[] {
   const chipCount = rotations.length;
-  const scale = viewportWidth / ringGeometry.baseWidth;
+  const scale = Math.max(viewportWidth / ringGeometry.baseWidth, MIN_RING_SCALE);
 
   // Ring 중심은 Hero 섹션(Nav를 뺀 영역)의 실제 중앙이다. Hero Copy 블록도 flex로 이
   // 중앙에 배치되므로, 칩도 같은 중심을 쓰면 블록을 정확히 둘러싸는 구도가 된다.
