@@ -62,8 +62,8 @@ describe('getMaxRadiusWithinViewport', () => {
 });
 
 describe('canUseRingLayout', () => {
-  it('폭·높이가 모두 기준(1512×790) 이상이면 링 배치를 쓸 수 있다', () => {
-    expect(canUseRingLayout(1512, 790)).toBe(true);
+  it('폭·높이가 모두 기준(1350×790) 이상이면 링 배치를 쓸 수 있다', () => {
+    expect(canUseRingLayout(1350, 790)).toBe(true);
     expect(canUseRingLayout(1920, 982)).toBe(true);
   });
 
@@ -72,7 +72,7 @@ describe('canUseRingLayout', () => {
   });
 
   it('높이가 기준보다 낮으면 폭이 충분해도 링 배치를 쓸 수 없다', () => {
-    expect(canUseRingLayout(1512, 789)).toBe(false);
+    expect(canUseRingLayout(1350, 789)).toBe(false);
   });
 });
 
@@ -98,12 +98,12 @@ describe('computeRingPositions — 칩 개수와 좌표 형태', () => {
   });
 });
 
-describe('1512px(링 배치 최소 기준)에서 칩이 화면(viewport) 밖으로 나가지 않는다 (spec 12장 #14)', () => {
+describe('링 배치 구간에서 칩이 화면(viewport) 밖으로 나가지 않는다 (spec 12장 #14)', () => {
   // 칩은 Hero Copy 블록이나 다른 칩과 겹쳐도 된다(7장 결정 로그 2026-10-11).
   // 유일한 하드 제약은 "화면 밖으로 나가지 않는다"이다 — 칩 bounding box(가장 긴 라벨
   // 기준 반폭 CHIP_MAX_HALF_WIDTH_PX)까지 포함해 확인한다.
-  it('1512px 폭에서 모든 칩의 bounding box가 화면 안에 있다', () => {
-    const { viewportWidth, viewportHeight } = viewportFor(1512);
+  it.each([1350, 1512])('%dpx 폭에서 모든 칩의 bounding box가 화면 안에 있다', (width) => {
+    const { viewportWidth, viewportHeight } = viewportFor(width);
     const positions = computeRingPositions({ viewportWidth, viewportHeight, rotations: ROTATIONS });
 
     for (const position of positions) {
