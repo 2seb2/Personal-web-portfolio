@@ -40,11 +40,11 @@ Figma `v2 — Design System` 섹션(node `156:1505`)의 요약. 값은 `styles/t
 | Figma 스타일 | 클래스 | 폰트 | 크기/행간 | 모바일(768px 미만) | 자간 | 쓰이는 곳 |
 |---|---|---|---|---|---|---|
 | display/lg | `type-display-lg` | Archivo 800 | 52/57 | 32/38 | −1.56 | 목록·상세 페이지 제목 |
-| display/hero | `type-display-hero` | Archivo 500 | 48/82 | — (3단계에서 처리) | −1.44 | 히어로 "I'm", 꼬리말 |
-| display/hero-strong | `type-display-hero-strong` | Archivo 800 | 48/82 | — (3단계에서 처리) | −1.44 | 히어로 "세비" |
-| heading/slot | `type-heading-slot` | Archivo 700 | 30/51 | — (3단계에서 처리) | −0.6 | 슬롯 안 글자 |
+| display/hero | `type-display-hero` | Archivo 500 | 48/82 | 30/41 | −1.44 | 히어로 "I'm", 꼬리말 |
+| display/hero-strong | `type-display-hero-strong` | Archivo 800 | 48/82 | 30/41 | −1.44 | 히어로 "세비" |
+| heading/slot | `type-heading-slot` | Archivo 700 | 30/51 | 18/27 | −0.6 | 슬롯 안 글자 |
 | heading/lg | `type-heading-lg` | Archivo 700 | 26/44 | — | −0.52 | 푸터 제목·이메일 |
-| lead | `type-lead` | Archivo 500 | 24/35 | — (3단계에서 처리) | −0.48 | 히어로 서브 문구 |
+| lead | `type-lead` | Archivo 500 | 24/35 | 20/29 | −0.48 | 히어로 서브 문구 |
 | heading/md | `type-heading-md` | Archivo 700 | 22/32 | 20/30 | −0.44 | 카드 제목, 상세 섹션 제목, 다음 프로젝트 |
 | body/lg | `type-body-lg` | Archivo 400 | 19/32 | 17/28 | −0.16 | 페이지 설명, 상세 요약 |
 | body/md | `type-body-md` | Archivo 400 | 16/27 | — | −0.16 | 상세 본문, 인용 |
