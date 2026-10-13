@@ -51,6 +51,23 @@ export function fromPlacedPosition(
   };
 }
 
+/**
+ * 이미 Hero 섹션 기준 상대 좌표(px)로 알고 있는 값을 비율(0~1)로 바꾼다. toPlacedPosition과
+ * 달리 뷰포트 좌표 변환·clamp를 하지 않는다 — 드래그로 놓인 칩 "중심"의 좌표(Ring이 직접
+ * 들고 있는 left/top, 이미 섹션 기준)를 그대로 저장할 때 쓴다. 포인터 좌표(toPlacedPosition이
+ * 받는 값)로 저장하면, 드래그 시작 시 포인터가 칩 중심을 정확히 잡지 않은 만큼 "칩 중심"과
+ * "포인터가 놓인 자리"가 달라져 드롭 직후 칩이 그 차이만큼 다시 튀어 보정되는 문제가 있었다.
+ */
+export function toPlacedPositionFromChipCenter(
+  chipCenter: { x: number; y: number },
+  sectionSize: { width: number; height: number },
+): PlacedPosition {
+  return {
+    x: sectionSize.width > 0 ? chipCenter.x / sectionSize.width : 0,
+    y: sectionSize.height > 0 ? chipCenter.y / sectionSize.height : 0,
+  };
+}
+
 function clamp(value: number, min: number, max: number): number {
   if (max < min) return min;
   return Math.min(Math.max(value, min), max);

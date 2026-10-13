@@ -2,6 +2,7 @@
 
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { site } from '@/content/site';
 import { keywords } from '@/content/keywords';
 import type { HeroKeyword } from '@/types/content';
@@ -9,7 +10,8 @@ import { Ring } from './Ring';
 import { MobileKeywordList } from './MobileKeywordList';
 import { heroReducer, initialHeroState } from './reducer';
 import { consumeHeroResetPending } from './resetEvent';
-import { isPointInSlot, toPlacedPosition } from './useDropTarget';
+import { isPointInSlot, toPlacedPositionFromChipCenter } from './useDropTarget';
+import { RETURN_SPRING, SUBCOPY_RISE_PX, SUBCOPY_TRANSITION_DURATION_S } from './animation';
 
 /** Nav 높이(px). Ring은 Hero 섹션(Nav 아래) 기준 좌표계를 쓰므로 섹션 자체 높이를 구할 때 뺀다 */
 const NAV_HEIGHT_PX = 57;
@@ -25,6 +27,7 @@ const keywordById = new Map(keywords.map((keyword) => [keyword.id, keyword]));
 export function Hero() {
   const { hero } = site;
   const router = useRouter();
+  const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
   const [sectionSize, setSectionSize] = useState(FALLBACK_SECTION_SIZE);
@@ -79,7 +82,22 @@ export function Hero() {
   // pathname이 바뀌는 것 자체가 리렌더링을 보장하지 않을 수 있는 경우(예: 이미 홈에서 다시
   // 홈 링크를 눌러 pathname이 그대로인 경우)를 대비해, pathname을 구독해 강제로 리렌더링을
   // 유발한다 — 그러면 위 effect가 다시 실행되어 플래그를 확인하게 된다.
-  usePathname();
+  const pathname = usePathname();
+
+  // router.push()는 완료를 알려주는 Promise/콜백이 없다(void 반환) — "실제로 다른 페이지로
+  // 이동했는지"는 Next.js가 공식 권장하는 대로 usePathname()의 변화로 관찰한다. Navigating
+  // 중 router.push를 호출한 바로 그 틱에 RESET_ALL을 dispatch하면, 라우팅은 비동기라 아직
+  // 이 페이지(Empty로 돌아간 홈)가 화면에 떠 있는 채로 한 프레임 보였다가 전환되는 깜빡임이
+  // 있었다 — pathname이 실제로 바뀐 뒤에만 리셋해 그 깜빡임을 없앤다.
+  const wasNavigatingRef = useRef(false);
+  useEffect(() => {
+    if (state.navigating) wasNavigatingRef.current = true;
+  }, [state.navigating]);
+  useEffect(() => {
+    if (!wasNavigatingRef.current) return;
+    wasNavigatingRef.current = false;
+    dispatch({ type: 'RESET_ALL' });
+  }, [pathname]);
 
   // 브라우저 자체의 뒤로가기 캐시(bfcache)로 복원되는 경우를 위한 보조 안전장치.
   // Next.js Router Cache를 쓰는 일반적인 페이지 전환에서는 발생하지 않지만(그 경우는
@@ -94,9 +112,10 @@ export function Hero() {
   }, []);
 
   // Navigating 상태가 되면 1.2s 뒤 이동한다 (spec 3·5장). Hero Copy 클릭 시 즉시 이동(아래 handleHeroCopyClick).
-  // Next.js Router Cache는 뒤로가기 시 이 페이지의 DOM·React 상태를 그대로 재사용하므로
-  // (컴포넌트가 리마운트되지 않음), 페이지를 떠나기 직전에 상태를 Empty로 되돌려 둔다 —
-  // 그래야 캐시에서 복원됐을 때도 Empty로 보인다 (spec 3장 "뒤로가기로 돌아옴: Empty").
+  // RESET_ALL은 여기서 바로 dispatch하지 않는다 — router.push 직후 같은 틱에 리셋하면 아직
+  // 라우팅이 끝나기 전(비동기)인 홈 화면이 Empty로 되돌아간 모습이 한 프레임 보였다가 전환되는
+  // 깜빡임이 있었다. 실제로 리셋하는 시점은 위 pathname 변화 감지 effect가 맡는다(spec 3장
+  // "뒤로가기로 돌아옴: Empty"도 같은 경로로 커버된다 — 뒤로가기도 pathname이 바뀌니까).
   useEffect(() => {
     if (!state.navigating) return;
     const target = keywordById.get(state.navigating);
@@ -104,7 +123,6 @@ export function Hero() {
 
     const timer = setTimeout(() => {
       router.push(target.href!);
-      dispatch({ type: 'RESET_ALL' });
     }, NAVIGATE_DELAY_MS);
     return () => clearTimeout(timer);
   }, [state.navigating, router]);
@@ -154,7 +172,14 @@ export function Hero() {
 
   // 드래그를 놓는 순간 포인터 좌표(뷰포트 기준)로 슬롯 안/밖을 판정한다 (spec 4장).
   // 슬롯 안이면 클릭과 같은 결과(PLACE_KEYWORD/PLACE_NAV), 밖이면 그 자리에 자유 배치(DROP_FREE).
-  function handleDragEnd(keyword: HeroKeyword, point: { x: number; y: number }) {
+  // 자유 배치 위치는 포인터 좌표가 아니라 칩 중심 좌표(chipCenter)로 저장한다 — 포인터로
+  // 저장하면 드래그 시작 시 포인터가 칩 중심을 정확히 잡지 않은 만큼 어긋나, 드롭 직후 칩이
+  // 그 차이만큼 다시 튀어 보정되는(스프링 오버슈트처럼 보이는) 문제가 있었다.
+  function handleDragEnd(
+    keyword: HeroKeyword,
+    point: { x: number; y: number },
+    chipCenter: { x: number; y: number },
+  ) {
     if (state.navigating) return;
 
     if (isPointInSlot(point, slotRef.current)) {
@@ -162,8 +187,7 @@ export function Hero() {
       return;
     }
 
-    if (!sectionRef.current) return;
-    const position = toPlacedPosition(point, sectionRef.current);
+    const position = toPlacedPositionFromChipCenter(chipCenter, sectionSize);
     dispatch({ type: 'DROP_FREE', id: keyword.id, position });
   }
 
@@ -177,7 +201,6 @@ export function Hero() {
     const target = keywordById.get(state.navigating);
     if (!target?.href) return;
     router.push(target.href);
-    dispatch({ type: 'RESET_ALL' });
   }
 
   const slotKeyword = state.slot ? keywordById.get(state.slot) : null;
@@ -193,24 +216,34 @@ export function Hero() {
     >
       {/* 칩(Ring)은 항상 Hero Copy 블록·슬롯보다 위 레이어에 있어야 한다 — 드래그로 끌어다
           놓을 때 슬롯이나 문구에 가려지면 안 되므로, 이 래퍼 자체에 z-index를 둬 아래
-          Hero Copy 블록(기본 쌓임 순서상 DOM에서 나중에 와 위에 쌓임)보다 앞세운다. */}
-      <div className="pointer-events-none absolute inset-0 z-20 hidden md:block">
-        <Ring
-          keywords={keywords}
-          viewportWidth={sectionSize.width}
-          viewportHeight={sectionSize.height}
-          heroCopyCenterY={heroCopyMetrics.centerY}
-          heroCopyHalfHeight={heroCopyMetrics.halfHeight}
-          slot={state.slot}
-          navigating={state.navigating !== null}
-          onSelect={handleSelect}
-          placed={state.placed}
-          stack={state.stack}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-          chipRefs={desktopChipRefs}
-        />
-      </div>
+          Hero Copy 블록(기본 쌓임 순서상 DOM에서 나중에 와 위에 쌓임)보다 앞세운다.
+          Navigating 진입 시 Ring을 즉시 언마운트하지 않고 opacity 0으로 페이드 아웃한다
+          (spec 6장) — Ring 자체는 if(navigating) return null 가드 없이 항상 렌더링되고,
+          AnimatePresence가 "보여줄지"를 결정해 exit 애니메이션이 끝난 뒤에만 언마운트한다. */}
+      <AnimatePresence>
+        {!state.navigating && (
+          <motion.div
+            className="pointer-events-none absolute inset-0 z-20 hidden md:block"
+            exit={{ opacity: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.3 }}
+          >
+            <Ring
+              keywords={keywords}
+              viewportWidth={sectionSize.width}
+              viewportHeight={sectionSize.height}
+              heroCopyCenterY={heroCopyMetrics.centerY}
+              heroCopyHalfHeight={heroCopyMetrics.halfHeight}
+              slot={state.slot}
+              onSelect={handleSelect}
+              placed={state.placed}
+              stack={state.stack}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              chipRefs={desktopChipRefs}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div
         ref={copyRef}
@@ -224,67 +257,126 @@ export function Hero() {
             {hero.name.before}
             <span className="type-display-hero-strong text-brand-text">{hero.name.strong}</span>
           </span>
-          {slotKeyword ? (
-            <button
-              ref={setSlotRef}
-              type="button"
-              onClick={() => handleSelect(slotKeyword)}
-              aria-label={`${slotKeyword.label} 선택됨, 누르면 비우기`}
-              className="type-heading-slot rounded-pill bg-selected px-6 py-2 text-on-selected"
-            >
-              {slotKeyword.label}
-            </button>
-          ) : navigatingKeyword ? (
-            <span ref={setSlotRef} className="type-heading-slot rounded-pill bg-selected px-6 py-2 text-on-selected">
-              {navigatingKeyword.label}
-            </span>
-          ) : (
-            <span
-              ref={setSlotRef}
-              aria-label="키워드를 넣는 칸"
-              className="type-heading-slot rounded-pill border-[1.5px] border-dashed border-brand px-6 py-2 text-fg-placeholder"
-            >
-              <span className="md:hidden">{hero.slotPlaceholder.mobile}</span>
-              <span className="hidden md:inline">{hero.slotPlaceholder.desktop}</span>
-            </span>
-          )}
+          {/* 칩 → 슬롯 전환(spec 6장): 처음엔 Ring의 칩과 layoutId를 공유해 Smart Animate처럼
+              위치까지 이어 붙이려 했으나, 드래그(변위 재생 — 위 Ring.tsx 주석 참고)·다른
+              키워드로 교체(같은 layoutId가 겹치는 순간 슬롯이 잠깐 빈 것처럼 보임)·Navigating
+              전환(지연·깜빡임) 세 가지 모두에서 어긋났다. 그래서 칩과 슬롯을 완전히 독립된
+              요소로 분리하고, 슬롯 쪽은 내용이 바뀔 때 제자리에서 페이드 전환만 한다 — 위치가
+              이어 붙는 "따라오는" 느낌은 포기하지만, 어떤 조합에서도 예측 가능하게 동작한다. */}
+          <AnimatePresence mode="wait">
+            {slotKeyword ? (
+              <motion.button
+                key={`slot-${slotKeyword.id}`}
+                ref={setSlotRef}
+                initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.95 }}
+                transition={prefersReducedMotion ? { duration: 0 } : RETURN_SPRING}
+                type="button"
+                onClick={() => handleSelect(slotKeyword)}
+                aria-label={`${slotKeyword.label} 선택됨, 누르면 비우기`}
+                className="type-heading-slot rounded-pill bg-selected px-6 py-2 text-on-selected"
+              >
+                {slotKeyword.label}
+              </motion.button>
+            ) : navigatingKeyword ? (
+              <motion.span
+                key={`nav-${navigatingKeyword.id}`}
+                ref={setSlotRef}
+                initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.95 }}
+                transition={prefersReducedMotion ? { duration: 0 } : RETURN_SPRING}
+                className="type-heading-slot rounded-pill bg-selected px-6 py-2 text-on-selected"
+              >
+                {navigatingKeyword.label}
+              </motion.span>
+            ) : (
+              <span
+                key="slot-empty"
+                ref={setSlotRef}
+                aria-label="키워드를 넣는 칸"
+                className="type-heading-slot rounded-pill border-[1.5px] border-dashed border-brand px-6 py-2 text-fg-placeholder"
+              >
+                <span className="md:hidden">{hero.slotPlaceholder.mobile}</span>
+                <span className="hidden md:inline">{hero.slotPlaceholder.desktop}</span>
+              </span>
+            )}
+          </AnimatePresence>
           <span>{trailing}</span>
         </h1>
 
         {/* spec 10장: Subcopy 영역에 aria-live="polite". 이벤트 안내(넣음/비움)는 sr-only 접두사로,
-            Navigating 안내는 화면에도 그대로 보이는 subcopy로 교체한다. */}
-        {navigatingKeyword ? (
-          <p aria-live="polite" className="type-lead whitespace-pre-line text-fg-secondary">
-            {navigatingKeyword.navigatingSubcopy}
-          </p>
-        ) : slotKeyword ? (
-          <p aria-live="polite" className="type-lead whitespace-pre-line text-fg-secondary">
-            <span className="sr-only">{announcementPrefix}</span>
-            {slotKeyword.subcopy}
-          </p>
-        ) : (
-          <p aria-live="polite" className="type-lead whitespace-pre-line text-fg-secondary">
-            <span className="sr-only">{announcementPrefix}</span>
-            {hero.subcopy.map((part, i) =>
-              typeof part === 'string' ? (
-                <span key={i}>{part}</span>
-              ) : (
-                <span key={i} className="text-brand-text">
-                  {part.strong}
-                </span>
-              ),
+            Navigating 안내는 화면에도 그대로 보이는 subcopy로 교체한다.
+            spec 6장: 이전 문구 페이드 아웃 → 새 문구 페이드 + 위로 8px 등장, 각 0.25s.
+            key를 문구 종류별로 다르게 둬야 AnimatePresence가 교체를 전환으로 인식한다. */}
+        <p aria-live="polite" className="type-lead relative whitespace-pre-line text-fg-secondary">
+          <AnimatePresence mode="wait" initial={false}>
+            {navigatingKeyword ? (
+              <motion.span
+                key={`nav-${navigatingKeyword.id}`}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: SUBCOPY_RISE_PX }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: 0 }}
+                transition={{ duration: prefersReducedMotion ? 0 : SUBCOPY_TRANSITION_DURATION_S }}
+                className="block"
+              >
+                {navigatingKeyword.navigatingSubcopy}
+              </motion.span>
+            ) : slotKeyword ? (
+              <motion.span
+                key={`slot-${slotKeyword.id}`}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: SUBCOPY_RISE_PX }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: 0 }}
+                transition={{ duration: prefersReducedMotion ? 0 : SUBCOPY_TRANSITION_DURATION_S }}
+                className="block"
+              >
+                <span className="sr-only">{announcementPrefix}</span>
+                {slotKeyword.subcopy}
+              </motion.span>
+            ) : (
+              <motion.span
+                key="default"
+                initial={prefersReducedMotion ? false : { opacity: 0, y: SUBCOPY_RISE_PX }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: 0 }}
+                transition={{ duration: prefersReducedMotion ? 0 : SUBCOPY_TRANSITION_DURATION_S }}
+                className="block"
+              >
+                <span className="sr-only">{announcementPrefix}</span>
+                {hero.subcopy.map((part, i) =>
+                  typeof part === 'string' ? (
+                    <span key={i}>{part}</span>
+                  ) : (
+                    <span key={i} className="text-brand-text">
+                      {part.strong}
+                    </span>
+                  ),
+                )}
+              </motion.span>
             )}
-          </p>
-        )}
+          </AnimatePresence>
+        </p>
 
         <p className="type-mono-xs text-fg-muted">
           <span className="md:hidden">{hero.hint.mobile}</span>
           <span className="hidden md:inline">{hero.hint.desktop}</span>
-          {hasPlacedChips ? (
-            <button type="button" onClick={handleTidy} className="type-mono-xs ml-3 hidden underline md:inline">
-              {hero.tidyLabel}
-            </button>
-          ) : null}
+          <AnimatePresence>
+            {hasPlacedChips ? (
+              <motion.button
+                type="button"
+                onClick={handleTidy}
+                initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.9 }}
+                transition={prefersReducedMotion ? { duration: 0 } : RETURN_SPRING}
+                className="type-mono-xs ml-3 hidden underline md:inline"
+              >
+                {hero.tidyLabel}
+              </motion.button>
+            ) : null}
+          </AnimatePresence>
         </p>
 
         <MobileKeywordList
