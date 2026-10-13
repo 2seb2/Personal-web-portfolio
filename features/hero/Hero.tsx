@@ -35,6 +35,8 @@ export function Hero() {
   const [state, dispatch] = useReducer(heroReducer, initialHeroState);
   /** spec 10장 aria-live 안내 중 "이벤트성" 문구(리셋 안내 등). Subcopy 앞에 sr-only로 붙는다 */
   const [announcementPrefix, setAnnouncementPrefix] = useState('');
+  /** 드래그 중 포인터가 슬롯 영역 위에 있는지 — 슬롯 테두리·scale로 드롭 가능 여부를 보여준다 (spec 4장) */
+  const [isOverSlot, setIsOverSlot] = useState(false);
 
   // Ring(링·띠)과 모바일 목록은 뷰포트와 무관하게 둘 다 DOM에 존재한다(CSS로만 숨김).
   // 같은 id가 두 곳에 있을 수 있으므로 레이아웃별로 Map을 분리해 보이는 쪽만 포커스한다.
@@ -239,6 +241,8 @@ export function Hero() {
               stack={state.stack}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
+              onDragOverSlotChange={setIsOverSlot}
+              slotElRef={slotRef}
               chipRefs={desktopChipRefs}
             />
           </motion.div>
@@ -292,15 +296,28 @@ export function Hero() {
                 {navigatingKeyword.label}
               </motion.span>
             ) : (
-              <span
+              // 드래그 중 포인터가 슬롯 위에 있으면 테두리를 점선→실선 brand로, scale을 1.03으로
+              // 키워 드롭 가능 여부를 보여준다(spec 4장). scale 자체는 즉시 반응해야 해서 짧은
+              // duration을 쓰고, 등장(mount)에는 RETURN_SPRING으로 별도 페이드인을 준다.
+              <motion.span
                 key="slot-empty"
                 ref={setSlotRef}
+                initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: isOverSlot ? 1.03 : 1 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.95 }}
+                transition={
+                  prefersReducedMotion
+                    ? { duration: 0 }
+                    : { opacity: RETURN_SPRING, scale: { duration: 0.15 } }
+                }
                 aria-label="키워드를 넣는 칸"
-                className="type-heading-slot rounded-pill border-[1.5px] border-dashed border-brand px-6 py-2 text-fg-placeholder"
+                className={`type-heading-slot rounded-pill border-[1.5px] px-6 py-2 text-fg-placeholder transition-colors duration-150 ${
+                  isOverSlot ? 'border-solid border-brand' : 'border-dashed border-brand'
+                }`}
               >
                 <span className="md:hidden">{hero.slotPlaceholder.mobile}</span>
                 <span className="hidden md:inline">{hero.slotPlaceholder.desktop}</span>
-              </span>
+              </motion.span>
             )}
           </AnimatePresence>
           <span>{trailing}</span>

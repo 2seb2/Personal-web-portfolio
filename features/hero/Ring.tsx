@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type RefObject } from 'react';
 import { animate, useDragControls, useMotionValue, useReducedMotion } from 'motion/react';
 import { KeywordPill } from '@/components/ui/KeywordPill';
 import { NavPill } from '@/components/ui/NavPill';
 import type { HeroKeyword } from '@/types/content';
 import { canUseRingLayout, computeRingPositions, computeStripLayout, type Point } from './geometry';
-import { fromPlacedPosition, getClientPoint } from './useDropTarget';
+import { fromPlacedPosition, getClientPoint, isPointInSlot } from './useDropTarget';
 import type { PlacedPosition } from './reducer';
 import { RETURN_SPRING, SETTLE_SPRING } from './animation';
 
@@ -39,6 +39,18 @@ type RingProps = {
    * 드롭 직후 포인터 위치로 다시 튀어 보정되는 어긋남이 없다 (spec 4장).
    */
   onDragEnd: (keyword: HeroKeyword, point: { x: number; y: number }, chipCenter: { x: number; y: number }) => void;
+  /**
+   * 드래그 중 포인터가 슬롯 영역 안/밖으로 넘어갈 때마다 호출 — 슬롯 테두리를 점선→실선
+   * brand/orange로, scale(1.03)으로 키워 드롭 가능 여부를 실시간으로 보여준다 (spec 4장).
+   */
+  onDragOverSlotChange: (isOver: boolean) => void;
+  /**
+   * 슬롯 DOM을 가리키는 ref 객체 자체(값이 아니라). 드래그 중 매 프레임 포인터와의 교차를
+   * 이벤트 핸들러(onDrag) 안에서 판정하는 데 쓴다 — ref.current를 렌더링 중에 직접 읽어
+   * prop으로 넘기면 "Cannot access refs during render" 규칙 위반이 되므로, ref 객체를
+   * 그대로 전달하고 .current는 항상 이벤트 콜백 안에서만 읽는다.
+   */
+  slotElRef: RefObject<HTMLElement | null>;
   /** 칩 DOM 요소를 id로 등록해 포커스 이동(spec 10장)에 쓴다 */
   chipRefs: Map<string, HTMLElement>;
 };
@@ -51,11 +63,24 @@ type ChipProps = {
   onSelect: (keyword: HeroKeyword) => void;
   onDragStart: (keyword: HeroKeyword) => void;
   onDragEnd: (keyword: HeroKeyword, point: { x: number; y: number }, chipCenter: { x: number; y: number }) => void;
+  onDragOverSlotChange: (isOver: boolean) => void;
+  slotElRef: RefObject<HTMLElement | null>;
   chipRefs: Map<string, HTMLElement>;
   zIndex: number;
 };
 
-function Chip({ keyword, position, isPlaced, onSelect, onDragStart, onDragEnd, chipRefs, zIndex }: ChipProps) {
+function Chip({
+  keyword,
+  position,
+  isPlaced,
+  onSelect,
+  onDragStart,
+  onDragEnd,
+  onDragOverSlotChange,
+  slotElRef,
+  chipRefs,
+  zIndex,
+}: ChipProps) {
   const prefersReducedMotion = useReducedMotion();
 
   // Motion은 같은 pointerup에서 press(tap) 제스처와 drag 제스처를 독립적으로 처리한다.
@@ -66,6 +91,8 @@ function Chip({ keyword, position, isPlaced, onSelect, onDragStart, onDragEnd, c
   // onTap/onDragEnd 호출 순서가 실행마다 달라질 수 있어(둘 중 하나가 플래그를 리셋), 어느 쪽이
   // 먼저 오든 "이번 포인터 세션에 drag가 있었는지"만 보고 그 다음 onTap 한 번을 무시한다.
   const draggedInThisSessionRef = useRef(false);
+  /** 직전 프레임에 포인터가 슬롯 안에 있었는지 — onDragOverSlotChange를 상태 변화 시에만 호출하는 데 쓴다 */
+  const wasOverSlotRef = useRef(false);
 
   // Motion은 drag 중 자신이 관리하는 x/y(변위)를 transform에 합성한다 — 여기에 또 다른
   // transform 문자열(중앙 정렬 -50%, 회전)을 같이 넣으면 Motion이 그 값을 지워버려 칩이
@@ -122,10 +149,14 @@ function Chip({ keyword, position, isPlaced, onSelect, onDragStart, onDragEnd, c
       motionY.stop();
       motionX.set('-50%');
       motionY.set('-50%');
+      if (wasOverSlotRef.current) {
+        wasOverSlotRef.current = false;
+        onDragOverSlotChange(false);
+      }
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [dragControls, motionX, motionY]);
+  }, [dragControls, motionX, motionY, onDragOverSlotChange]);
 
   const style = {
     left: motionLeft,
@@ -152,10 +183,18 @@ function Chip({ keyword, position, isPlaced, onSelect, onDragStart, onDragEnd, c
       isDraggingRef.current = true;
       draggedInThisSessionRef.current = true;
       dragOffsetRef.current = { x: 0, y: 0 };
+      wasOverSlotRef.current = false;
       onDragStart(keyword);
     },
-    onDrag: (_event: unknown, info: { offset: Point }) => {
+    onDrag: (event: PointerEvent | MouseEvent | TouchEvent, info: { offset: Point }) => {
       dragOffsetRef.current = info.offset;
+      // 포인터가 슬롯 안/밖을 넘나들 때만 알린다 — 매 프레임 호출하면 Hero.tsx가 매번
+      // state를 갱신·리렌더링하게 되므로, 실제로 상태가 바뀔 때만 콜백을 부른다 (spec 4장).
+      const isOver = isPointInSlot(getClientPoint(event), slotElRef.current);
+      if (isOver !== wasOverSlotRef.current) {
+        wasOverSlotRef.current = isOver;
+        onDragOverSlotChange(isOver);
+      }
     },
     // dragMomentum={false}는 release 시 초기 속도만 0으로 만들 뿐, Motion은 여전히
     // type: "inertia" 애니메이션을 x/y(motionX/Y)에 걸고 몇 프레임에 걸쳐 서서히 끝낸다 —
@@ -177,6 +216,11 @@ function Chip({ keyword, position, isPlaced, onSelect, onDragStart, onDragEnd, c
       motionX.set('-50%');
       motionY.set('-50%');
       prevPositionRef.current = { x: settledX, y: settledY, rotateDeg: position.rotateDeg };
+
+      if (wasOverSlotRef.current) {
+        wasOverSlotRef.current = false;
+        onDragOverSlotChange(false);
+      }
 
       onDragEnd(keyword, getClientPoint(event), { x: settledX, y: settledY });
     },
@@ -242,6 +286,8 @@ export function Ring({
   stack,
   onDragStart,
   onDragEnd,
+  onDragOverSlotChange,
+  slotElRef,
   chipRefs,
 }: RingProps) {
   // 슬롯에 들어간 칩은 Ring에서 자리를 비워둔다 — 나머지 칩은 각자의 각도/순서를 그대로 유지
@@ -291,6 +337,8 @@ export function Ring({
               onSelect={onSelect}
               onDragStart={onDragStart}
               onDragEnd={onDragEnd}
+              onDragOverSlotChange={onDragOverSlotChange}
+              slotElRef={slotElRef}
               chipRefs={chipRefs}
               zIndex={zIndexFor(keyword, isPlaced, 0)}
             />
@@ -331,6 +379,8 @@ export function Ring({
             onSelect={onSelect}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
+            onDragOverSlotChange={onDragOverSlotChange}
+            slotElRef={slotElRef}
             chipRefs={chipRefs}
             zIndex={zIndexFor(keyword, isPlaced, i)}
           />
@@ -348,6 +398,8 @@ export function Ring({
             onSelect={onSelect}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
+            onDragOverSlotChange={onDragOverSlotChange}
+            slotElRef={slotElRef}
             chipRefs={chipRefs}
             zIndex={zIndexFor(keyword, isPlaced, topKeywords.length + i)}
           />
