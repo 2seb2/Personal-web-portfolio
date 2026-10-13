@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState, type CSSProperties } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { site } from '@/content/site';
@@ -11,7 +11,12 @@ import { MobileKeywordList } from './MobileKeywordList';
 import { heroReducer, initialHeroState } from './reducer';
 import { consumeHeroResetPending } from './resetEvent';
 import { isPointInSlot, toPlacedPositionFromChipCenter } from './useDropTarget';
-import { RETURN_SPRING, SUBCOPY_RISE_PX, SUBCOPY_TRANSITION_DURATION_S } from './animation';
+import {
+  RETURN_SPRING,
+  SLOT_FILL_DURATION_S,
+  SUBCOPY_RISE_PX,
+  SUBCOPY_TRANSITION_DURATION_S,
+} from './animation';
 
 /** Nav 높이(px). Ring은 Hero 섹션(Nav 아래) 기준 좌표계를 쓰므로 섹션 자체 높이를 구할 때 뺀다 */
 const NAV_HEIGHT_PX = 57;
@@ -23,6 +28,21 @@ const FALLBACK_HERO_COPY = { centerY: FALLBACK_SECTION_SIZE.height / 2, halfHeig
 const NAVIGATE_DELAY_MS = 1200;
 
 const keywordById = new Map(keywords.map((keyword) => [keyword.id, keyword]));
+
+/** 정리 버튼 라벨 앞 새로고침 아이콘. TidyButton.tsx의 같은 아이콘과 동일한 path를 쓴다 */
+function TidyIcon() {
+  return (
+    <svg viewBox="0 0 12 12" width="12" height="12" fill="none" aria-hidden="true">
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M1.5 6c0 .89.264 1.76.758 2.5.495.74 1.198 1.317 2.02 1.658.823.34 1.727.429 2.6.255.873-.173 1.675-.602 2.304-1.231.63-.63 1.058-1.431 1.232-2.305.173-.873.085-1.778-.256-2.6a4.502 4.502 0 0 0-1.658-2.02A4.498 4.498 0 0 0 6 1.5c-1.258.005-2.466.496-3.37 1.37L1.5 4"
+      />
+      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M1.5 1.5V4H4" />
+    </svg>
+  );
+}
 
 export function Hero() {
   const { hero } = site;
@@ -44,6 +64,13 @@ export function Hero() {
    * borderColor 캐싱 버그(KeywordPill 참고)를 피하기 위해 색상 보간은 Motion에 맡기지 않는다.
    */
   const [tidyJustAppeared, setTidyJustAppeared] = useState(false);
+  /**
+   * 슬롯 pill이 지금 Empty↔Filled "색이 채워지거나 빠지는" 모핑 중인지, 어느 방향인지.
+   * 'filling'(Empty→Filled) 동안은 Subcopy·꼬리말을 비워두고 모핑이 끝난 뒤 페이드인한다.
+   * 'draining'(Filled→Empty) 동안은 기본 Subcopy가 즉시 겹쳐서 나타나고 기존 것만 fade out.
+   * 칩을 다른 칩으로 교체(Filled→Filled)할 때는 모핑이 없으므로(null) 건드리지 않는다.
+   */
+  const [slotMorphDirection, setSlotMorphDirection] = useState<'filling' | 'draining' | null>(null);
 
   // Ring(링·띠)과 모바일 목록은 뷰포트와 무관하게 둘 다 DOM에 존재한다(CSS로만 숨김).
   // 같은 id가 두 곳에 있을 수 있으므로 레이아웃별로 Map을 분리해 보이는 쪽만 포커스한다.
@@ -216,6 +243,35 @@ export function Hero() {
   const navigatingKeyword = state.navigating ? keywordById.get(state.navigating) : null;
   const hasPlacedChips = Object.keys(state.placed).length > 0;
 
+  // draining(Filled→Empty 모핑) 중에는 state.slot이 이미 null이라 slotKeyword도 null이다 —
+  // 그 동안 "빠지기 전 칩"의 subcopy를 계속 fade out으로 보여줘야 하므로 마지막 값을 기억한다.
+  // 렌더링 중 state를 조정하는 React 권장 패턴(ref가 아니라 state로 이전 값을 들고, 값이
+  // 달라졌을 때만 렌더 중에 바로 set) — ref는 렌더 중 읽거나 쓸 수 없어 lint 규칙에 걸린다.
+  const [lastSlotKeyword, setLastSlotKeyword] = useState(slotKeyword);
+  if (slotKeyword && slotKeyword !== lastSlotKeyword) setLastSlotKeyword(slotKeyword);
+
+  // Empty↔Filled 전환(둘 중 하나라도 null)일 때만 "색이 채워지거나 빠지는" 모핑을 건다.
+  // Filled→Filled(다른 키워드로 교체)나 Navigating이 관여하는 전환은 모핑 대상이 아니다 —
+  // Navigating 진입 시 slot이 null이 되지만(reducer PLACE_NAV), 그건 별도 트리(navigatingKeyword)가
+  // 맡으므로 여기서는 navigating이 아닐 때만 본다. prevSlot도 ref 대신 state로 들고 렌더 중
+  // 비교해 즉시 조정한다(React 권장: "Adjusting state when a prop changes").
+  const [prevSlotForMorph, setPrevSlotForMorph] = useState(state.slot);
+  if (state.slot !== prevSlotForMorph) {
+    setPrevSlotForMorph(state.slot);
+    const isEmptyFilledTransition = (prevSlotForMorph === null) !== (state.slot === null);
+    if (isEmptyFilledTransition && !state.navigating) {
+      setSlotMorphDirection(prefersReducedMotion ? null : prevSlotForMorph === null ? 'filling' : 'draining');
+    }
+  }
+
+  // 모핑 시작 후 SLOT_FILL_DURATION_S 뒤 자동으로 끝낸다. slotMorphDirection이 바뀔 때만
+  // 타이머를 새로 건다 — "외부 시스템(타이머)을 React state와 동기화"하는 전형적인 effect 용도.
+  useEffect(() => {
+    if (!slotMorphDirection) return;
+    const timer = setTimeout(() => setSlotMorphDirection(null), SLOT_FILL_DURATION_S * 1000);
+    return () => clearTimeout(timer);
+  }, [slotMorphDirection]);
+
   // 정리 버튼이 false → true로 막 나타난 순간에만 짧게 강조색을 켠다 (아래 tidyJustAppeared).
   const hadPlacedChipsRef = useRef(hasPlacedChips);
   useEffect(() => {
@@ -231,7 +287,23 @@ export function Hero() {
   // Empty(슬롯이 비어 있고 Navigating도 아닌 상태)에서는 꼬리말을 보여주지 않는다 — spec 5장은
   // "Developer." 꼬리말을 Filled 상태에서만 명시한다. 슬롯에 아직 아무것도 넣지 않았는데
   // "Developer."가 보이면 "넣어야 완성되는 문장"이라는 느낌이 옅어진다.
-  const trailing = navigatingKeyword?.trailing ?? (slotKeyword ? hero.trailing : '');
+  const trailing = navigatingKeyword?.trailing ?? hero.trailing;
+  // 꼬리말이 "보여야 하는지"를 전환 종류별로 다르게 판단한다 (slotKeyword 자체는 filling
+  // 모핑 시작과 동시에 이미 새 값이라, 보일지 여부는 slotMorphDirection과 함께 봐야 한다):
+  // - filling 중(Empty→Filled 모핑 진행 중): slotKeyword는 이미 true지만 아직 숨김 → 모핑이
+  //   끝나(slotMorphDirection이 null로) 처음 true가 되는 순간 AnimatePresence가 페이드인한다.
+  // - Filled 안정 상태: true, 그대로 유지(교체돼도 계속 true라 애니메이션 없이 가만히 있음).
+  // - 칩을 빼는 순간(draining 시작): slotKeyword가 바로 null이 되어 즉시 false로 바뀌고, 그
+  //   전환 자체가 AnimatePresence exit(페이드아웃)를 트리거한다 — "바꿈과 동시에 페이드아웃
+  //   시작"이라는 요구사항과 맞아, draining 동안 true로 묶어둘 필요가 없다.
+  const showTrailing = Boolean(navigatingKeyword) || (Boolean(slotKeyword) && slotMorphDirection !== 'filling');
+  // Subcopy 오버레이(nav/slot 문구)를 보여줄지 — 꼬리말과 같은 조건(navigating 제외).
+  const showFilledSubcopy = Boolean(slotKeyword) && slotMorphDirection !== 'filling';
+  // 기본 Subcopy(바닥 레이어)를 보여줄지 — Empty 안정 상태(slotKeyword 없고 모핑 없음)에는
+  // 정상적으로 보이고, draining 중(slotKeyword가 막 null이 된 직후)에는 기존 문구가 fade
+  // out하는 동안 그 밑에 애니메이션 없이 즉시 겹쳐 드러난다(사용자 요구: "빼는 순간부터
+  // 겹침 시작"). filling 중과 Filled 안정 상태에서는 숨긴다.
+  const showDefaultSubcopy = !navigatingKeyword && !slotKeyword && slotMorphDirection !== 'filling';
 
   return (
     <div
@@ -290,22 +362,7 @@ export function Hero() {
               요소로 분리하고, 슬롯 쪽은 내용이 바뀔 때 제자리에서 페이드 전환만 한다 — 위치가
               이어 붙는 "따라오는" 느낌은 포기하지만, 어떤 조합에서도 예측 가능하게 동작한다. */}
           <AnimatePresence mode="wait">
-            {slotKeyword ? (
-              <motion.button
-                key={`slot-${slotKeyword.id}`}
-                ref={setSlotRef}
-                initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.95 }}
-                transition={prefersReducedMotion ? { duration: 0 } : RETURN_SPRING}
-                type="button"
-                onClick={() => handleSelect(slotKeyword)}
-                aria-label={`${slotKeyword.label} 선택됨, 누르면 비우기`}
-                className="type-heading-slot rounded-pill bg-selected px-6 py-2 text-on-selected"
-              >
-                {slotKeyword.label}
-              </motion.button>
-            ) : navigatingKeyword ? (
+            {navigatingKeyword ? (
               <motion.span
                 key={`nav-${navigatingKeyword.id}`}
                 ref={setSlotRef}
@@ -318,12 +375,21 @@ export function Hero() {
                 {navigatingKeyword.label}
               </motion.span>
             ) : (
-              // 드래그 중 포인터가 슬롯 위에 있으면 테두리를 점선→실선 brand로, scale을 1.03으로
-              // 키워 드롭 가능 여부를 보여준다(spec 4장). scale 자체는 즉시 반응해야 해서 짧은
-              // duration을 쓰고, 등장(mount)에는 RETURN_SPRING으로 별도 페이드인을 준다.
-              <motion.span
-                key="slot-empty"
+              // 키워드 슬롯(Empty/Filled)은 하나의 persistent 엘리먼트로 둔다(key 고정) — Empty↔Filled
+              // 전환에서 "빈 슬롯이 그대로 색이 채워지며/빠지며 칩으로 변환"되는 모핑이 필요해서,
+              // Filled일 때와 Empty일 때를 서로 다른 요소로 교체(언마운트/마운트)하면 모핑이 불가능하다.
+              // 텍스트는 상태가 바뀌는 즉시 교체하고, 배경·글자색·테두리만 className 토글 +
+              // transition-colors(순수 CSS)로 서서히 바뀐다 — Motion의 backgroundColor/color
+              // 애니메이션은 테마 전환 시 그 순간 색이 inline style에 고정되는 버그(KeywordPill
+              // 참고)가 있어 피한다. Filled→Filled(다른 키워드로 교체)는 className이 그대로
+              // 유지돼(둘 다 Filled 모양) transition이 트리거되지 않으므로 pill 자체는 애니메이션
+              // 없이 텍스트만 바뀐다 — 이번 요구사항과 일치.
+              <motion.button
+                key="keyword-slot"
                 ref={setSlotRef}
+                type="button"
+                onClick={() => slotKeyword && handleSelect(slotKeyword)}
+                disabled={!slotKeyword}
                 initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: isOverSlot ? 1.03 : 1 }}
                 exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.95 }}
@@ -332,24 +398,75 @@ export function Hero() {
                     ? { duration: 0 }
                     : { opacity: RETURN_SPRING, scale: { duration: 0.15 } }
                 }
-                aria-label="키워드를 넣는 칸"
-                className={`type-heading-slot rounded-pill border-[1.5px] px-6 py-2 text-fg-placeholder transition-colors duration-150 ${
-                  isOverSlot ? 'border-solid border-brand bg-brand/10' : 'border-dashed border-brand bg-transparent'
+                aria-label={
+                  slotKeyword ? `${slotKeyword.label} 선택됨, 누르면 비우기` : '키워드를 넣는 칸'
+                }
+                // 드래그 중 isOverSlot 토글(점선↔실선, 투명↔연한 배경)은 빠르게(150ms) 반응해야
+                // 하고, Empty↔Filled 모핑(slotMorphDirection)은 "색이 서서히 채워지거나 빠지는"
+                // 느낌을 위해 느리게(SLOT_FILL_DURATION_S) 간다 — 둘이 같은 transition-colors
+                // 클래스를 쓰므로 slotMorphDirection 여부로 duration 자체를 바꿔 끼운다.
+                className={`type-heading-slot rounded-pill border-[1.5px] px-6 py-2 transition-colors ${
+                  slotMorphDirection ? 'duration-(--slot-fill-ms)' : 'duration-150'
+                } ${
+                  slotKeyword
+                    ? 'border-transparent bg-selected text-on-selected'
+                    : isOverSlot
+                      ? 'border-solid border-brand bg-brand/10 text-fg-placeholder'
+                      : 'border-dashed border-brand bg-transparent text-fg-placeholder'
                 }`}
+                style={{ '--slot-fill-ms': `${SLOT_FILL_DURATION_S * 1000}ms` } as CSSProperties}
               >
-                <span className="md:hidden">{hero.slotPlaceholder.mobile}</span>
-                <span className="hidden md:inline">{hero.slotPlaceholder.desktop}</span>
+                {slotKeyword ? (
+                  slotKeyword.label
+                ) : (
+                  <>
+                    <span className="md:hidden">{hero.slotPlaceholder.mobile}</span>
+                    <span className="hidden md:inline">{hero.slotPlaceholder.desktop}</span>
+                  </>
+                )}
+              </motion.button>
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {showTrailing && (
+              <motion.span
+                initial={prefersReducedMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+                transition={{ duration: prefersReducedMotion ? 0 : SUBCOPY_TRANSITION_DURATION_S }}
+              >
+                {trailing}
               </motion.span>
             )}
           </AnimatePresence>
-          <span>{trailing}</span>
         </h1>
 
         {/* spec 10장: Subcopy 영역에 aria-live="polite". 이벤트 안내(넣음/비움)는 sr-only 접두사로,
             Navigating 안내는 화면에도 그대로 보이는 subcopy로 교체한다.
             spec 6장: 이전 문구 페이드 아웃 → 새 문구 페이드 + 위로 8px 등장, 각 0.25s.
-            key를 문구 종류별로 다르게 둬야 AnimatePresence가 교체를 전환으로 인식한다. */}
-        <p aria-live="polite" className="type-lead relative whitespace-pre-line text-fg-secondary">
+
+            기본 서브텍스트(default)는 항상 DOM에 깔려 있는 "바닥 레이어"이고, nav/slot
+            서브텍스트는 그 위에 겹치는 "오버레이"다 — Filled→Empty(draining)로 칩을 뺄 때
+            기존 서브텍스트가 fade out하는 동안 기본 서브텍스트가 애니메이션 없이 즉시 그
+            아래에서 겹쳐 드러나야 하는데(사용자 요구), 두 레이어가 동시에 DOM에 존재해야만
+            가능하다. 두 레이어를 같은 grid 영역에 겹쳐 두면(absolute 대신) 둘 중 더 큰 쪽이
+            컨테이너 높이를 결정해, 길이가 다른 문구끼리 겹쳐도 넘치거나 잘리지 않는다. */}
+        <p
+          aria-live="polite"
+          className="type-lead relative grid whitespace-pre-line text-fg-secondary"
+        >
+          <span className={`col-start-1 row-start-1 block ${showDefaultSubcopy ? '' : 'invisible'}`}>
+            <span className="sr-only">{announcementPrefix}</span>
+            {hero.subcopy.map((part, i) =>
+              typeof part === 'string' ? (
+                <span key={i}>{part}</span>
+              ) : (
+                <span key={i} className="text-brand-text">
+                  {part.strong}
+                </span>
+              ),
+            )}
+          </span>
           <AnimatePresence mode="wait" initial={false}>
             {navigatingKeyword ? (
               <motion.span
@@ -358,43 +475,23 @@ export function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={prefersReducedMotion ? undefined : { opacity: 0, y: 0 }}
                 transition={{ duration: prefersReducedMotion ? 0 : SUBCOPY_TRANSITION_DURATION_S }}
-                className="block"
+                className="col-start-1 row-start-1 block"
               >
                 {navigatingKeyword.navigatingSubcopy}
               </motion.span>
-            ) : slotKeyword ? (
+            ) : showFilledSubcopy && (slotKeyword ?? lastSlotKeyword) ? (
               <motion.span
-                key={`slot-${slotKeyword.id}`}
+                key={`slot-${(slotKeyword ?? lastSlotKeyword)!.id}`}
                 initial={prefersReducedMotion ? false : { opacity: 0, y: SUBCOPY_RISE_PX }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={prefersReducedMotion ? undefined : { opacity: 0, y: 0 }}
                 transition={{ duration: prefersReducedMotion ? 0 : SUBCOPY_TRANSITION_DURATION_S }}
-                className="block"
+                className="col-start-1 row-start-1 block"
               >
                 <span className="sr-only">{announcementPrefix}</span>
-                {slotKeyword.subcopy}
+                {(slotKeyword ?? lastSlotKeyword)!.subcopy}
               </motion.span>
-            ) : (
-              <motion.span
-                key="default"
-                initial={prefersReducedMotion ? false : { opacity: 0, y: SUBCOPY_RISE_PX }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: 0 }}
-                transition={{ duration: prefersReducedMotion ? 0 : SUBCOPY_TRANSITION_DURATION_S }}
-                className="block"
-              >
-                <span className="sr-only">{announcementPrefix}</span>
-                {hero.subcopy.map((part, i) =>
-                  typeof part === 'string' ? (
-                    <span key={i}>{part}</span>
-                  ) : (
-                    <span key={i} className="text-brand-text">
-                      {part.strong}
-                    </span>
-                  ),
-                )}
-              </motion.span>
-            )}
+            ) : null}
           </AnimatePresence>
         </p>
 
@@ -414,10 +511,11 @@ export function Hero() {
                 whileTap={{ scale: 0.96 }}
                 // 등장 직후(tidyJustAppeared)에는 brand 색으로 보이다가, 색 자체는 Tailwind
                 // transition-colors(순수 CSS)로 기본 색으로 식는다 — 눈에 안 띈다는 피드백 보완.
-                className={`type-mono-xs ml-3 hidden cursor-pointer underline transition-colors duration-180 ease-out hover:text-brand-text md:inline ${
+                className={`type-mono-xs ml-3 hidden cursor-pointer items-center gap-1 underline transition-colors duration-180 ease-out hover:text-brand-text md:inline-flex ${
                   tidyJustAppeared ? 'text-brand-text duration-700' : 'text-fg-muted'
                 }`}
               >
+                <TidyIcon />
                 {hero.tidyLabel}
               </motion.button>
             ) : null}

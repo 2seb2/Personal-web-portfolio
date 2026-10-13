@@ -17,3 +17,9 @@ export const SUBCOPY_TRANSITION_DURATION_S = 0.25;
 export const SUBCOPY_RISE_PX = 8;
 /** 칩 호버 (spec 6장) */
 export const CHIP_HOVER_TRANSITION = { duration: 0.18, ease: 'easeOut' as const };
+/**
+ * 슬롯 pill의 배경·글자색이 "채워지거나 빠지는" 모핑 길이(Empty↔Filled 전환에만 적용).
+ * CSS transition-colors로 처리한다 — Motion의 backgroundColor/color 애니메이션은 테마 전환 시
+ * inline style에 그 순간의 색이 고정되는 버그(KeywordPill/NavPill 참고)가 있어 피한다.
+ */
+export const SLOT_FILL_DURATION_S = 0.45;
