@@ -9,6 +9,7 @@ import { Ring } from './Ring';
 import { MobileKeywordList } from './MobileKeywordList';
 import { heroReducer, initialHeroState } from './reducer';
 import { consumeHeroResetPending } from './resetEvent';
+import { isPointInSlot, toPlacedPosition } from './useDropTarget';
 
 /** Nav 높이(px). Ring은 Hero 섹션(Nav 아래) 기준 좌표계를 쓰므로 섹션 자체 높이를 구할 때 뺀다 */
 const NAV_HEIGHT_PX = 57;
@@ -36,7 +37,14 @@ export function Hero() {
   // 같은 id가 두 곳에 있을 수 있으므로 레이아웃별로 Map을 분리해 보이는 쪽만 포커스한다.
   const [desktopChipRefs] = useState(() => new Map<string, HTMLElement>());
   const [mobileChipRefs] = useState(() => new Map<string, HTMLElement>());
-  const slotRef = useRef<HTMLButtonElement>(null);
+  // Empty·Filled·Navigating 세 상태가 각각 다른 요소(span/button/span)를 렌더링하므로, 드래그
+  // 판정이 상태와 무관하게 항상 같은 슬롯 영역을 보도록 공통 ref 콜백으로 그때그때 현재
+  // 렌더링된 요소를 받는다 — Filled일 때의 <button>에만 ref를 달면 Empty(placeholder)일 때는
+  // slotRef.current가 계속 null이라 "슬롯이 비어 있을 때는 드래그로 아예 넣을 수 없는" 버그가 된다.
+  const slotRef = useRef<HTMLElement | null>(null);
+  const setSlotRef = (el: HTMLElement | null) => {
+    slotRef.current = el;
+  };
   /** 다음 렌더 후 포커스를 옮길 대상. 'slot' 또는 칩 id */
   const pendingFocusTarget = useRef<'slot' | string | null>(null);
 
@@ -139,6 +147,31 @@ export function Hero() {
     }
   }
 
+  function handleDragStart(keyword: HeroKeyword) {
+    if (state.navigating) return;
+    dispatch({ type: 'PICK_UP', id: keyword.id });
+  }
+
+  // 드래그를 놓는 순간 포인터 좌표(뷰포트 기준)로 슬롯 안/밖을 판정한다 (spec 4장).
+  // 슬롯 안이면 클릭과 같은 결과(PLACE_KEYWORD/PLACE_NAV), 밖이면 그 자리에 자유 배치(DROP_FREE).
+  function handleDragEnd(keyword: HeroKeyword, point: { x: number; y: number }) {
+    if (state.navigating) return;
+
+    if (isPointInSlot(point, slotRef.current)) {
+      handleSelect(keyword);
+      return;
+    }
+
+    if (!sectionRef.current) return;
+    const position = toPlacedPosition(point, sectionRef.current);
+    dispatch({ type: 'DROP_FREE', id: keyword.id, position });
+  }
+
+  function handleTidy() {
+    dispatch({ type: 'TIDY' });
+    setAnnouncementPrefix(hero.live.tidy + ' ');
+  }
+
   function handleHeroCopyClick() {
     if (!state.navigating) return;
     const target = keywordById.get(state.navigating);
@@ -149,6 +182,7 @@ export function Hero() {
 
   const slotKeyword = state.slot ? keywordById.get(state.slot) : null;
   const navigatingKeyword = state.navigating ? keywordById.get(state.navigating) : null;
+  const hasPlacedChips = Object.keys(state.placed).length > 0;
 
   const trailing = navigatingKeyword?.trailing ?? hero.trailing;
 
@@ -157,7 +191,10 @@ export function Hero() {
       ref={sectionRef}
       className="relative flex min-h-[calc(100vh-57px)] items-center justify-center px-6 py-20 md:px-14"
     >
-      <div className="hidden md:block">
+      {/* 칩(Ring)은 항상 Hero Copy 블록·슬롯보다 위 레이어에 있어야 한다 — 드래그로 끌어다
+          놓을 때 슬롯이나 문구에 가려지면 안 되므로, 이 래퍼 자체에 z-index를 둬 아래
+          Hero Copy 블록(기본 쌓임 순서상 DOM에서 나중에 와 위에 쌓임)보다 앞세운다. */}
+      <div className="pointer-events-none absolute inset-0 z-20 hidden md:block">
         <Ring
           keywords={keywords}
           viewportWidth={sectionSize.width}
@@ -167,6 +204,10 @@ export function Hero() {
           slot={state.slot}
           navigating={state.navigating !== null}
           onSelect={handleSelect}
+          placed={state.placed}
+          stack={state.stack}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
           chipRefs={desktopChipRefs}
         />
       </div>
@@ -185,7 +226,7 @@ export function Hero() {
           </span>
           {slotKeyword ? (
             <button
-              ref={slotRef}
+              ref={setSlotRef}
               type="button"
               onClick={() => handleSelect(slotKeyword)}
               aria-label={`${slotKeyword.label} 선택됨, 누르면 비우기`}
@@ -194,11 +235,12 @@ export function Hero() {
               {slotKeyword.label}
             </button>
           ) : navigatingKeyword ? (
-            <span className="type-heading-slot rounded-pill bg-selected px-6 py-2 text-on-selected">
+            <span ref={setSlotRef} className="type-heading-slot rounded-pill bg-selected px-6 py-2 text-on-selected">
               {navigatingKeyword.label}
             </span>
           ) : (
             <span
+              ref={setSlotRef}
               aria-label="키워드를 넣는 칸"
               className="type-heading-slot rounded-pill border-[1.5px] border-dashed border-brand px-6 py-2 text-fg-placeholder"
             >
@@ -238,6 +280,11 @@ export function Hero() {
         <p className="type-mono-xs text-fg-muted">
           <span className="md:hidden">{hero.hint.mobile}</span>
           <span className="hidden md:inline">{hero.hint.desktop}</span>
+          {hasPlacedChips ? (
+            <button type="button" onClick={handleTidy} className="type-mono-xs ml-3 hidden underline md:inline">
+              {hero.tidyLabel}
+            </button>
+          ) : null}
         </p>
 
         <MobileKeywordList
