@@ -37,6 +37,13 @@ export function Hero() {
   const [announcementPrefix, setAnnouncementPrefix] = useState('');
   /** 드래그 중 포인터가 슬롯 영역 위에 있는지 — 슬롯 테두리·scale로 드롭 가능 여부를 보여준다 (spec 4장) */
   const [isOverSlot, setIsOverSlot] = useState(false);
+  /**
+   * 정리 버튼이 막 나타난 순간인지 — true인 동안만 brand 색으로 보이다가 CSS transition으로
+   * 기본 색으로 식는다. 처음 자유 배치를 만들 때 버튼 등장이 눈에 잘 안 띈다는 피드백으로 추가.
+   * 색 자체는 Tailwind 클래스 토글(순수 CSS transition)로 처리한다 — Motion whileHover의
+   * borderColor 캐싱 버그(KeywordPill 참고)를 피하기 위해 색상 보간은 Motion에 맡기지 않는다.
+   */
+  const [tidyJustAppeared, setTidyJustAppeared] = useState(false);
 
   // Ring(링·띠)과 모바일 목록은 뷰포트와 무관하게 둘 다 DOM에 존재한다(CSS로만 숨김).
   // 같은 id가 두 곳에 있을 수 있으므로 레이아웃별로 Map을 분리해 보이는 쪽만 포커스한다.
@@ -209,7 +216,22 @@ export function Hero() {
   const navigatingKeyword = state.navigating ? keywordById.get(state.navigating) : null;
   const hasPlacedChips = Object.keys(state.placed).length > 0;
 
-  const trailing = navigatingKeyword?.trailing ?? hero.trailing;
+  // 정리 버튼이 false → true로 막 나타난 순간에만 짧게 강조색을 켠다 (아래 tidyJustAppeared).
+  const hadPlacedChipsRef = useRef(hasPlacedChips);
+  useEffect(() => {
+    if (!hadPlacedChipsRef.current && hasPlacedChips) {
+      setTidyJustAppeared(true);
+      const timer = setTimeout(() => setTidyJustAppeared(false), prefersReducedMotion ? 0 : 900);
+      hadPlacedChipsRef.current = hasPlacedChips;
+      return () => clearTimeout(timer);
+    }
+    hadPlacedChipsRef.current = hasPlacedChips;
+  }, [hasPlacedChips, prefersReducedMotion]);
+
+  // Empty(슬롯이 비어 있고 Navigating도 아닌 상태)에서는 꼬리말을 보여주지 않는다 — spec 5장은
+  // "Developer." 꼬리말을 Filled 상태에서만 명시한다. 슬롯에 아직 아무것도 넣지 않았는데
+  // "Developer."가 보이면 "넣어야 완성되는 문장"이라는 느낌이 옅어진다.
+  const trailing = navigatingKeyword?.trailing ?? (slotKeyword ? hero.trailing : '');
 
   return (
     <div
@@ -312,7 +334,7 @@ export function Hero() {
                 }
                 aria-label="키워드를 넣는 칸"
                 className={`type-heading-slot rounded-pill border-[1.5px] px-6 py-2 text-fg-placeholder transition-colors duration-150 ${
-                  isOverSlot ? 'border-solid border-brand' : 'border-dashed border-brand'
+                  isOverSlot ? 'border-solid border-brand bg-brand/10' : 'border-dashed border-brand bg-transparent'
                 }`}
               >
                 <span className="md:hidden">{hero.slotPlaceholder.mobile}</span>
@@ -388,7 +410,13 @@ export function Hero() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.9 }}
                 transition={prefersReducedMotion ? { duration: 0 } : RETURN_SPRING}
-                className="type-mono-xs ml-3 hidden underline md:inline"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                // 등장 직후(tidyJustAppeared)에는 brand 색으로 보이다가, 색 자체는 Tailwind
+                // transition-colors(순수 CSS)로 기본 색으로 식는다 — 눈에 안 띈다는 피드백 보완.
+                className={`type-mono-xs ml-3 hidden cursor-pointer underline transition-colors duration-180 ease-out hover:text-brand-text md:inline ${
+                  tidyJustAppeared ? 'text-brand-text duration-700' : 'text-fg-muted'
+                }`}
               >
                 {hero.tidyLabel}
               </motion.button>
