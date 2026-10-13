@@ -1,8 +1,9 @@
 'use client';
 
-import type { ButtonHTMLAttributes, Ref } from 'react';
+import { motion, type HTMLMotionProps } from 'motion/react';
+import type { Ref } from 'react';
 
-type KeywordPillProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+type KeywordPillProps = HTMLMotionProps<'button'> & {
   label: string;
   pressed?: boolean;
   ref?: Ref<HTMLButtonElement>;
@@ -10,7 +11,7 @@ type KeywordPillProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 export function KeywordPill({ label, pressed = false, className, ref, ...props }: KeywordPillProps) {
   return (
-    <button
+    <motion.button
       ref={ref}
       type="button"
       aria-pressed={pressed}
@@ -18,6 +19,6 @@ export function KeywordPill({ label, pressed = false, className, ref, ...props }
       {...props}
     >
       {label}
-    </button>
+    </motion.button>
   );
 }
