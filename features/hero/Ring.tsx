@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useRef, type RefObject } from 'react';
-import { animate, useDragControls, useMotionValue, useReducedMotion } from 'motion/react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
+import { animate, motion, useDragControls, useMotionValue, useReducedMotion } from 'motion/react';
 import { KeywordPill } from '@/components/ui/KeywordPill';
 import { NavPill } from '@/components/ui/NavPill';
 import type { HeroKeyword } from '@/types/content';
 import { canUseRingLayout, computeRingPositions, computeStripLayout, type Point } from './geometry';
 import { fromPlacedPosition, getClientPoint, isPointInSlot } from './useDropTarget';
 import type { PlacedPosition } from './reducer';
-import { RETURN_SPRING, SETTLE_SPRING } from './animation';
+import { FLOAT_RISE_PX, RETURN_SPRING, SETTLE_SPRING, getFloatParams } from './animation';
 
 /**
  * 드래그 중이거나 자유 배치된 칩의 z-index. Hero Copy 블록·슬롯(모두 기본 쌓임 순서)보다
@@ -107,6 +107,9 @@ function Chip({
   const motionLeft = useMotionValue(position.x);
   const motionTop = useMotionValue(position.y);
   const isDraggingRef = useRef(false);
+  // isDraggingRef와 별개로 state로도 들고 있다 — floating 애니메이션(아래)을 드래그 중에만
+  // 끄려면 리렌더가 필요한데, ref 변경은 리렌더를 유발하지 않는다.
+  const [isDragging, setIsDragging] = useState(false);
   // 드래그 중 누적 이동량(px) — 드래그 종료 시 "포인터가 실제로 도달한 화면 좌표"를
   // 계산하는 데 쓴다(motionLeft/Top의 현재값 + 이 오프셋). PanInfo.offset은 드래그 시작점
   // 기준 누적값이라 매 onDrag마다 덮어쓰면 된다.
@@ -144,6 +147,8 @@ function Chip({
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key !== 'Escape' || !isDraggingRef.current) return;
       dragControls.cancel();
+      isDraggingRef.current = false;
+      setIsDragging(false);
       // cancel()도 release와 마찬가지로 inertia 애니메이션을 유발할 수 있어 stop()으로 끊는다.
       motionX.stop();
       motionY.stop();
@@ -158,18 +163,27 @@ function Chip({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [dragControls, motionX, motionY, onDragOverSlotChange]);
 
-  const style = {
-    left: motionLeft,
-    top: motionTop,
-    x: motionX,
-    y: motionY,
-    rotate: position.rotateDeg,
-    zIndex,
-  };
+  // 위치(left/top)·zIndex는 바깥 wrapper가, 드래그 변위(x/y)·회전은 Pill 자신이 담당한다 —
+  // 그 사이에 floating(두둥실 뜨는 y 흔들림) 전용 wrapper를 끼워 넣기 위해서다. floating을
+  // Pill과 같은 엘리먼트의 animate에 얹으면 Motion이 이미 drag로 쓰고 있는 y(style.y =
+  // motionY)와 같은 transform 속성을 두고 경합한다 — 그래서 floating만 별도 DOM 엘리먼트의
+  // transform으로 둬 서로 완전히 독립시킨다.
+  // zIndex도 바깥 wrapper에서 직접 계산한다 — 기존엔 Pill의 whileDrag로 드래그 중 zIndex를
+  // 올렸지만, Pill이 이제 자체 transform(드래그 변위)이 있는 wrapper 안에 있어 별도
+  // stacking context가 생겨 Pill의 z-index가 wrapper 바깥(다른 칩들)에는 영향을 주지
+  // 못한다 — 드래그 중인 칩이 다른 칩 밑에 깔리는 회귀가 있었다. isDragging state로
+  // wrapper 자체의 zIndex를 올려야 Ring 전체 기준으로 맨 위에 쌓인다.
+  const outerStyle = { left: motionLeft, top: motionTop, zIndex: isDragging ? DRAGGING_Z_INDEX : zIndex };
+  const pillStyle = { x: motionX, y: motionY, rotate: position.rotateDeg };
   const setRef = (el: HTMLElement | null) => {
     if (el) chipRefs.set(keyword.id, el);
     else chipRefs.delete(keyword.id);
   };
+
+  // 두둥실 뜨는 느낌(floating) — 가만히 있는 칩(Home 또는 자유 배치, 드래그 중이 아닐 때)에만
+  // 건다. keyword.id로 duration·delay를 결정론적으로 뽑아 칩마다 다른 주기로 겹치지 않게 한다.
+  const floatParams = getFloatParams(keyword.id);
+  const isFloating = !isDragging && !prefersReducedMotion;
 
   // onDragEnd에는 뷰포트 좌표(clientX/Y)를 넘긴다 — info.point는 page 좌표(pageX/Y)라
   // getBoundingClientRect() 기반 슬롯 판정과 스크롤이 있으면 어긋난다.
@@ -181,6 +195,7 @@ function Chip({
     dragElastic: 0,
     onDragStart: () => {
       isDraggingRef.current = true;
+      setIsDragging(true);
       draggedInThisSessionRef.current = true;
       dragOffsetRef.current = { x: 0, y: 0 };
       wasOverSlotRef.current = false;
@@ -205,6 +220,7 @@ function Chip({
     // 중인 애니메이션(이 inertia 포함)을 명시적으로 끊은 뒤에 원하는 값을 set()한다.
     onDragEnd: (event: PointerEvent | MouseEvent | TouchEvent) => {
       isDraggingRef.current = false;
+      setIsDragging(false);
       const settledX = motionLeft.get() + dragOffsetRef.current.x;
       const settledY = motionTop.get() + dragOffsetRef.current.y;
       motionX.stop();
@@ -224,7 +240,6 @@ function Chip({
 
       onDragEnd(keyword, getClientPoint(event), { x: settledX, y: settledY });
     },
-    whileDrag: { zIndex: DRAGGING_Z_INDEX },
   };
 
   // 클릭이 아니라 Motion의 onTap을 쓴다 — onClick은 평범한 합성 이벤트라 드래그와 무관하게
@@ -245,32 +260,53 @@ function Chip({
     ? {}
     : { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.2 } };
 
-  if (keyword.type === 'nav') {
-    return (
+  // floating wrapper: 바깥(위치 left/top/zIndex)과 Pill(드래그 변위 x/y·회전) 사이에서
+  // 두둥실 뜨는 y 흔들림만 전담한다. isFloating이 꺼지면(드래그 시작) y를 0으로 즉시
+  // 되돌린다 — 드래그 중엔 Pill 쪽 motionY가 위치를 담당하므로 floating의 잔여값이 남으면
+  // 그만큼 어긋나 보인다.
+  const pill =
+    keyword.type === 'nav' ? (
       <NavPill
         ref={setRef}
         label={keyword.label}
         href={keyword.href ?? '#'}
-        className="pointer-events-auto absolute"
-        style={style}
+        className="pointer-events-auto absolute left-0 top-0"
+        style={pillStyle}
         {...mountFade}
         {...dragHandlers}
         onClick={(e) => e.preventDefault()}
         onTap={handleTap}
       />
+    ) : (
+      <KeywordPill
+        ref={setRef}
+        label={keyword.label}
+        className="pointer-events-auto absolute left-0 top-0"
+        style={pillStyle}
+        {...mountFade}
+        {...dragHandlers}
+        onTap={handleTap}
+      />
     );
-  }
 
   return (
-    <KeywordPill
-      ref={setRef}
-      label={keyword.label}
-      className="pointer-events-auto absolute"
-      style={style}
-      {...mountFade}
-      {...dragHandlers}
-      onTap={handleTap}
-    />
+    <motion.div
+      style={outerStyle}
+      className="absolute"
+      animate={isFloating ? { y: [0, -FLOAT_RISE_PX, 0] } : { y: 0 }}
+      transition={
+        isFloating
+          ? {
+              duration: floatParams.duration,
+              delay: floatParams.delay,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }
+          : { duration: 0.15 }
+      }
+    >
+      {pill}
+    </motion.div>
   );
 }
 
