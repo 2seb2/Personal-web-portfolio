@@ -23,3 +23,37 @@ export const CHIP_HOVER_TRANSITION = { duration: 0.18, ease: 'easeOut' as const 
  * inline style에 그 순간의 색이 고정되는 버그(KeywordPill/NavPill 참고)가 있어 피한다.
  */
 export const SLOT_FILL_DURATION_S = 0.45;
+
+/**
+ * 가만히 있는(Home 또는 자유 배치 — 드래그 중이 아닌) 칩이 두둥실 떠 있는 느낌을 주는
+ * floating 애니메이션 범위. 칩마다 다른 duration·delay를 줘서 서로 겹치지 않게 한다
+ * (아래 getFloatParams 참고). 상하로만 움직이고 좌우·회전은 건드리지 않는다.
+ */
+export const FLOAT_RISE_PX = 8;
+export const FLOAT_DURATION_RANGE_S: [number, number] = [4, 4.5];
+/** 칩마다 다른 시작 지점을 주기 위한 딜레이 범위 — duration보다 좁게 둬 겹치는 구간을 줄인다 */
+export const FLOAT_DELAY_RANGE_S: [number, number] = [0, 2];
+
+/**
+ * 문자열(keyword id)을 결정론적 0~1 값으로 바꾼다 — Math.random()을 쓰면 서버/클라이언트
+ * 렌더링 결과가 달라져 하이드레이션 미스매치가 나므로, id로부터 항상 같은 값을 뽑는다.
+ */
+function hashToUnit(seed: string): number {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+  return hash / 0xffffffff;
+}
+
+/** keyword id로부터 이 칩만의 floating duration·delay를 결정론적으로 뽑는다 */
+export function getFloatParams(seed: string): { duration: number; delay: number } {
+  const [minDuration, maxDuration] = FLOAT_DURATION_RANGE_S;
+  const [minDelay, maxDelay] = FLOAT_DELAY_RANGE_S;
+  const durationUnit = hashToUnit(`${seed}-duration`);
+  const delayUnit = hashToUnit(`${seed}-delay`);
+  return {
+    duration: minDuration + durationUnit * (maxDuration - minDuration),
+    delay: minDelay + delayUnit * (maxDelay - minDelay),
+  };
+}
