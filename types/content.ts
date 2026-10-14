@@ -25,7 +25,7 @@ export type HeroKeyword = {
 // ---------- Projects ----------
 export type ProjectSlug = 'jikyeojwo-homes' | 'boostad' | 'web-os-emulator' | 'namota-igeota';
 
-export type ProjectBlockLabel = '발견' | '원인' | '판단' | '결과' | '문제' | '해결';
+export type ProjectBlockLabel = '발견' | '원인' | '판단' | '결과' | '문제' | '해결' | '검토';
 
 export type ProjectSection = {
   /** 번호가 있는 문제 섹션이면 1부터. Overview·서비스 흐름 등은 없음 */
