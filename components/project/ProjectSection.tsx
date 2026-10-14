@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { RichText } from '@/components/ui/RichText';
 import type { ProjectSection as ProjectSectionType } from '@/types/content';
 
 type ProjectSectionProps = {
@@ -30,12 +31,12 @@ export function ProjectSection({ section }: ProjectSectionProps) {
       {section.blocks?.map((block, i) => (
         <p key={i} className="mt-3.5 type-body-md text-fg-strong first:mt-3">
           <span className="type-body-md-strong text-brand-text">{block.label} </span>
-          {block.text}
+          {typeof block.text === 'string' ? block.text : <RichText text={block.text} variant="detail" />}
         </p>
       ))}
 
       {section.image && (
-        <div className="relative mt-3 h-[503px] w-full overflow-hidden rounded-img bg-sunken">
+        <div className="relative mt-3 h-125.75 w-full overflow-hidden rounded-img bg-sunken">
           <Image
             src={section.image.src}
             alt={section.image.alt}

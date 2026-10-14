@@ -33,8 +33,8 @@ export type ProjectSection = {
   title: string;
   /** 일반 문단 (라벨 없음) */
   paragraphs?: string[];
-  /** 라벨이 붙은 문단 — 라벨은 brand-text 색 + body-md-strong */
-  blocks?: Array<{ label: ProjectBlockLabel; text: string }>;
+  /** 라벨이 붙은 문단 — 라벨은 brand-text 색 + body-md-strong. text의 강조 구간은 RichText */
+  blocks?: Array<{ label: ProjectBlockLabel; text: string | RichText }>;
   /** 섹션 안 이미지 */
   image?: { src: string; alt: string; width: number; height: number };
   /** 섹션 끝 인용 박스 (bg-sunken + 왼쪽 brand 선) */

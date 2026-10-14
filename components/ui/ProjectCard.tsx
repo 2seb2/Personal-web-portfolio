@@ -1,22 +1,11 @@
 import Image from 'next/image';
-import type { Project, RichText } from '@/types/content';
+import { RichText } from '@/components/ui/RichText';
+import type { Project } from '@/types/content';
 
 type ProjectCardProps = {
   project: Project;
   priority?: boolean;
 };
-
-function renderRichText(text: RichText) {
-  return text.map((part, i) =>
-    typeof part === 'string' ? (
-      <span key={i}>{part}</span>
-    ) : (
-      <span key={i} className="type-body-sm-strong text-fg">
-        {part.strong}
-      </span>
-    ),
-  );
-}
 
 export function ProjectCard({ project, priority = false }: ProjectCardProps) {
   const href = project.detail
@@ -58,7 +47,7 @@ export function ProjectCard({ project, priority = false }: ProjectCardProps) {
         <ul className="w-full list-disc pt-1.25 ps-5">
           {project.highlights.map((highlight, i) => (
             <li key={i} className="type-body-sm text-fg-secondary">
-              {renderRichText(highlight)}
+              <RichText text={highlight} variant="card" />
             </li>
           ))}
         </ul>
