@@ -111,6 +111,7 @@ Figma `v2 — Design System` 섹션(node `156:1505`)의 요약. 값은 `styles/t
 ### 상세 페이지 블록
 - 섹션 제목: `type-heading-md`, 번호(`1.`)만 `brand-text`
 - 라벨 문단: 라벨(`발견` 등) `type-body-md-strong text-brand-text` + 본문 `type-body-md text-fg-strong`
+- 라벨 문단 본문 안 강조 구간(RichText): `type-body-md-strong text-brand-text`
 - 인용 박스: `bg-sunken`, 왼쪽 3px `brand` 선, `rounded-img`(오른쪽만), 패딩 20·24, `type-body-md text-fg-strong`
 - 메타: 4개 항목 가로 배치 `justify-between`, 용어 `type-mono-xs fg-muted`, 값 `type-body-sm-medium fg` — **열 폭에 맞춰 줄바꿈, 넘치지 않음**
 - 다음 프로젝트 카드: 열 폭 100%, `rounded-next`, 테두리 `line`, 라벨 `type-mono-sm brand-text`, 제목 `type-heading-md`
