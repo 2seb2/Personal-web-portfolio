@@ -4,7 +4,7 @@ import { getProjects } from '@/lib/projects';
 import { ProjectCard } from '@/components/ui/ProjectCard';
 
 export const metadata: Metadata = {
-  title: `${site.pages.projects.title} · ${site.name}`,
+  title: site.pages.projects.title,
   description: site.pages.projects.description,
 };
 

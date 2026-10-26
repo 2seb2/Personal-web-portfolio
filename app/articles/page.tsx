@@ -4,7 +4,7 @@ import { getArticles } from '@/lib/articles';
 import { Tag } from '@/components/ui/Tag';
 
 export const metadata: Metadata = {
-  title: `${site.pages.articles.title} · ${site.name}`,
+  title: site.pages.articles.title,
   description: site.pages.articles.description,
 };
 

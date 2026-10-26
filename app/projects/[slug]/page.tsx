@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
-import { site } from '@/content/site';
 import { getProjects, getProject, getNextProject } from '@/lib/projects';
 import { ProjectSection } from '@/components/project/ProjectSection';
 import type { ProjectSlug } from '@/types/content';
@@ -22,7 +21,7 @@ export async function generateMetadata({
   if (!project?.detail) return {};
 
   return {
-    title: `${project.detail.title} · ${site.name}`,
+    title: project.name,
     description: project.detail.summary,
   };
 }
