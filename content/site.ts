@@ -46,8 +46,11 @@ export const site = {
     note: '프론트엔드 신입 포지션을 찾고 있습니다.\n채용 제안이나 커피챗 모두 편하게 연락 주세요.',
     links: [
       { label: 'GitHub', href: 'https://github.com/2seb2' },
-      { label: 'LinkedIn', href: '#' }, // TODO(세비): 주소 넣기 또는 항목 삭제 (임시 '#')
-      { label: '이력서', href: '/resume.pdf' },   // TODO(세비): public/resume.pdf 추가 (없으면 404)
+      {
+        label: 'LinkedIn',
+        href: 'https://www.linkedin.com/in/%EC%84%B8%EB%B9%84-%EC%9D%B4-6b6653403/?isSelfProfile=true',
+      },
+      { label: '이력서', href: '/LeeSebi-resume.pdf' },
     ],
     // TODO(세비): 임시 문구 — 확정 필요 (레퍼런스 사이트 문구와 겹치지 않게 바꿔 둔 것)
     copyright: '© 2026 이세비 — Figma에서 그리고, 코드로 만들고, 다시 써보며 다듬었습니다.',
