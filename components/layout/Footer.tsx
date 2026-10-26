@@ -15,17 +15,20 @@ export function Footer() {
           {site.footer.note}
         </p>
         <div className="mt-8 flex flex-wrap gap-4 md:gap-6">
-          {site.footer.links.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              target={link.href.startsWith('http') ? '_blank' : undefined}
-              rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-              className="type-mono-sm text-fg-secondary"
-            >
-              {link.label} ↗
-            </a>
-          ))}
+          {site.footer.links.map((link) => {
+            const opensInNewTab = link.href.startsWith('http') || link.href.endsWith('.pdf');
+            return (
+              <a
+                key={link.label}
+                href={link.href}
+                target={opensInNewTab ? '_blank' : undefined}
+                rel={opensInNewTab ? 'noopener noreferrer' : undefined}
+                className="type-mono-sm text-fg-secondary"
+              >
+                {link.label} ↗
+              </a>
+            );
+          })}
         </div>
         <p className="type-mono-xs mt-8 text-fg-muted">{site.footer.copyright}</p>
       </div>
