@@ -36,13 +36,13 @@ export function ProjectSection({ section }: ProjectSectionProps) {
       ))}
 
       {section.image?.map((image, i) => (
-        <div key={i} className="relative mt-3 h-125.75 w-full overflow-hidden rounded-img bg-sunken">
+        <div key={i} className="relative mt-3 w-full overflow-hidden rounded-img bg-sunken">
           <Image
             src={image.src}
             alt={image.alt}
             width={image.width}
             height={image.height}
-            className="h-full w-full object-cover"
+            className="w-full"
           />
         </div>
       ))}
