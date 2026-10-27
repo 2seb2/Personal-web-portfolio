@@ -35,17 +35,17 @@ export function ProjectSection({ section }: ProjectSectionProps) {
         </p>
       ))}
 
-      {section.image && (
-        <div className="relative mt-3 h-125.75 w-full overflow-hidden rounded-img bg-sunken">
+      {section.image?.map((image, i) => (
+        <div key={i} className="relative mt-3 h-125.75 w-full overflow-hidden rounded-img bg-sunken">
           <Image
-            src={section.image.src}
-            alt={section.image.alt}
-            width={section.image.width}
-            height={section.image.height}
+            src={image.src}
+            alt={image.alt}
+            width={image.width}
+            height={image.height}
             className="h-full w-full object-cover"
           />
         </div>
-      )}
+      ))}
 
       {section.callout && <Callout text={section.callout} />}
 

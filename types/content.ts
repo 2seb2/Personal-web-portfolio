@@ -35,8 +35,8 @@ export type ProjectSection = {
   paragraphs?: string[];
   /** 라벨이 붙은 문단 — 라벨은 brand-text 색 + body-md-strong. text의 강조 구간은 RichText */
   blocks?: Array<{ label: ProjectBlockLabel; text: string | RichText }>;
-  /** 섹션 안 이미지 */
-  image?: { src: string; alt: string; width: number; height: number };
+  /** 섹션 안 이미지. 여러 장이면 순서대로 세로로 쌓임 */
+  image?: Array<{ src: string; alt: string; width: number; height: number }>;
   /** 섹션 끝 인용 박스 (bg-sunken + 왼쪽 brand 선) */
   callout?: string;
   /** 글머리표 목록 (결과 섹션) */
