@@ -15,13 +15,12 @@ export const projects: Project[] = [
       ['모바일 입력창 자동 확대 제거, 손가락 확대는 유지'],
       ['머지 전 ', { strong: '오류 21회 자동 차단' }, ' (CI 152회 중)'],
     ],
-    thumbnail: { src: '/images/projects/jikyeojwo-homes/thumb.webp', alt: '지켜줘홈즈 정보 입력 화면' }, // 지금은 placeholder — TODO(세비): 실제 이미지로 교체
+    thumbnail: { src: '/images/projects/jikyeojwo-homes/thumb.webp', alt: '지켜줘홈즈 정보 입력 화면' },
     links: { github: 'https://github.com/S1J2-Lab/home-protect-client' },
     detail: {
       eyebrow: 'Project 01 — Web · 2026',
       title: '전세 계약 전, AI가 위험 요소를 분석해 주는 서비스',
       summary: '랜딩·정보 입력·서류 업로드 화면을 만들고, 이 흐름이 배포할 때마다 깨지지 않도록 E2E 테스트와 CI/CD를 맡았습니다.',
-      // TODO(세비): 지금은 회색 placeholder 이미지 — 같은 파일명으로 실제 이미지 교체
       heroImage: { src: '/images/projects/jikyeojwo-homes/hero.webp', alt: '지켜줘홈즈 서비스 화면', width: 1640, height: 874 },
       meta: [
         { term: '역할', value: ['Frontend Developer', '3인 팀 (FE 2 · BE 1)'] },
@@ -41,8 +40,7 @@ export const projects: Project[] = [
         },
         {
           title: '서비스 흐름',
-          // TODO(세비): 지금은 회색 placeholder 이미지 — 서비스 흐름 이미지로 교체, 담당 구간(랜딩·입력·업로드) 강조 표시
-          image: { src: '/images/projects/jikyeojwo-homes/flow.webp', alt: '랜딩, 주소 입력, 계약 정보, 서류 업로드, 분석 진행, 결과 확인으로 이어지는 서비스 화면 흐름', width: 1640, height: 1006 },
+          image: [{ src: '/images/projects/jikyeojwo-homes/flow.webp', alt: '랜딩, 주소 입력, 계약 정보, 서류 업로드, 분석 진행, 결과 확인으로 이어지는 서비스 화면 흐름', width: 1640, height: 1006 }],
           callout: '이 중 제가 맡은 구간은 랜딩과 주소·계약 정보·서류 업로드, 세 단계의 입력 화면입니다.',
         },
         {
@@ -54,6 +52,7 @@ export const projects: Project[] = [
             { label: '판단', text: '뷰포트 설정으로 확대 자체를 막는 방법도 있었지만, 그러면 화면을 키워 봐야 하는 사용자의 손가락 확대까지 막게 됩니다. 접근성 지침(WCAG 1.4.4 텍스트 크기 조정) 위반이라 배제하고, 대신 글자 크기를 16px로 올리고 높이 변화는 여백으로 보정했습니다.' },
             { label: '결과', text: '입력할 때마다 화면을 다시 축소하지 않아도 하단 버튼을 바로 누를 수 있게 됐습니다. 화면을 키워 봐야 하는 사용자를 위한 손가락 확대는 그대로 남겼습니다.' },
           ],
+          image: [{ src: '/images/projects/jikyeojwo-homes/zoom.webp', alt: '입력창 글자 크기를 14px에서 16px로 올려 iOS 자동 확대 문제를 해결하는 과정', width: 1640, height: 1006 }],
           callout: '데스크탑에서는 보이지 않던 문제라, 모바일에서 직접 써보며 알게 됐습니다.',
         },
         {
@@ -65,6 +64,7 @@ export const projects: Project[] = [
             { label: '판단', text: 'ref로 최신 입력 상태를 동기화해, 콜백이 항상 최신 값을 참조하도록 고쳤습니다. 경고는 처음에 직접 만든 모달로 띄우려 했지만, 새로고침과 탭 닫기는 브라우저 정책상 직접 만든 모달을 띄울 수 없었습니다. 경로마다 직접 만든 모달과 브라우저 창이 섞여 뜨는 것보다 일관된 게 낫다고 보고, 뒤로가기(useBlocker)까지 모든 이탈 경로를 브라우저 기본 확인창 계열로 맞췄습니다.' },
             { label: '결과', text: '뒤로가기·새로고침·탭 닫기 세 경로 모두 입력이 있을 때만 경고하고, 정상 제출할 때는 뜨지 않는 것까지 테스트로 확인했습니다.' },
           ],
+          image: [{ src: '/images/projects/jikyeojwo-homes/exit.webp', alt: '뒤로가기, 새로고침, 탭 닫기 등 이탈 경로마다 입력 내용이 있을 때만 경고창이 뜨는 동작', width: 1640, height: 1006 }],
           callout: '서류를 다시 찾아 올려야 하는 사용자에게, 실수로 한 번 나가는 건 작은 일이 아닙니다.',
         },
         {
@@ -75,6 +75,7 @@ export const projects: Project[] = [
             { label: '판단', text: '서비스 코드에 "테스트일 때는 다르게 동작"하는 분기를 넣으면, 테스트는 실제 사용자가 거치지 않는 경로를 검증하게 됩니다. 그래서 서비스 코드는 그대로 두고, 테스트 브라우저가 뜰 때만 실시간 수신 기능(EventSource)을 가짜 구현체로 바꿔 끼우는 방식을 택했습니다.' },
             { label: '결과', text: ['정상 완료, 단계별 에러, 무한 대기를 테스트마다 골라 넣을 수 있게 됐고, 전체 흐름 ', { strong: '32개 시나리오' }, '를 자동화했습니다. 그 과정에서 2번 이탈 경고 버그를 포함해 숨어 있던 ', { strong: '버그 4건' }, '을 찾아 고쳤습니다.'] },
           ],
+          image: [{ src: '/images/projects/jikyeojwo-homes/e2e.webp', alt: '분석 진행 상황(SSE)의 정상 완료·진행 중·실패·응답 멈춤 네 가지 상태를 Playwright E2E 테스트로 검증하는 과정', width: 1640, height: 1006 }],
           callout: '테스트는 흐름을 확인하는 도구이기도 했지만, 손으로는 찾기 어려웠던 버그를 찾아내는 방법이기도 했습니다.',
         },
         {
@@ -85,6 +86,7 @@ export const projects: Project[] = [
             { label: '판단', text: '개발을 시작하면서 PR 검증과 배포 워크플로를 나눠 만들었습니다. PR에서는 타입 체크·린트·단위 테스트를 돌리고, 이를 통과해야만 머지되도록 막았습니다. 배포는 S3 + CloudFront로 직접 구성했습니다.' },
             { label: '결과', text: ['프로젝트 기간 동안 ', { strong: 'CI 152회 중 21회' }, '를 머지 전에 막았습니다. main에 머지하면 빌드, S3 업로드, CloudFront 캐시 무효화까지 자동으로 이어집니다.'] },
           ],
+          image: [{ src: '/images/projects/jikyeojwo-homes/cicd.webp', alt: 'PR 검증(ESLint·Prettier·타입체크)을 통과해야 머지되고, 머지 시 빌드·S3 업로드·CloudFront 캐시 무효화까지 자동으로 이어지는 CI/CD 파이프라인', width: 1640, height: 1006 }],
           callout: '21번의 오류가 main에 닿기 전에 PR 단계에서 멈췄습니다.',
         },
         {
@@ -120,13 +122,12 @@ export const projects: Project[] = [
       ['실사용 피드백으로 광고 크기 조정·설치 안내 보완'],
       ['검색되지 않던 서비스를 ', { strong: '서비스명 검색 1위' }, '로 (동명 기업 사이트보다 상위 노출)'],
     ],
-    thumbnail: { src: '/images/projects/boostad/thumb.webp', alt: 'BoostAD 캠페인 관리 화면' }, // 지금은 placeholder — TODO(세비): 실제 이미지로 교체
+    thumbnail: { src: '/images/projects/boostad/thumb.webp', alt: 'BoostAD 캠페인 관리 화면' },
     links: { github: 'https://github.com/boostcampwm2025/web27-BoostAD' },
     detail: {
       eyebrow: 'Project 02 — Web · 2026',
       title: '개발 블로그 글 내용에 맞는 광고를 붙이는 플랫폼',
       summary: '프론트엔드를 주도해 광고주·퍼블리셔 화면을 만들고, 첫 로딩 경험과 검색 노출, 실사용 피드백 반영을 맡았습니다.',
-      // TODO(세비): 지금은 회색 placeholder 이미지 — 같은 파일명으로 실제 이미지 교체
       heroImage: { src: '/images/projects/boostad/hero.webp', alt: 'BoostAD 서비스 화면', width: 1640, height: 874 },
       meta: [
         { term: '역할', value: ['Frontend Developer', '4인 팀 (FE 1 · BE 중심 3)'] },
@@ -146,8 +147,7 @@ export const projects: Project[] = [
         },
         {
           title: '서비스 흐름',
-          // TODO(세비): 서비스 흐름 이미지 추가 — 광고주·퍼블리셔·독자 흐름, 담당 화면 강조 표시 (규격은 지켜줘홈즈 flow.webp와 동일)
-          image: { src: '/images/projects/boostad/flow.webp', alt: '광고주의 캠페인 생성, 퍼블리셔의 SDK 연동, 독자에게 광고가 노출되기까지의 서비스 흐름', width: 1640, height: 1006 },
+          image: [{ src: '/images/projects/boostad/flow.webp', alt: '광고주의 캠페인 생성, 퍼블리셔의 SDK 연동, 독자에게 광고가 노출되기까지의 서비스 흐름', width: 1640, height: 1006 }],
           callout: '이 중 제가 맡은 화면은 광고주의 캠페인 생성·관리와, 퍼블리셔의 SDK 설치 가이드·수익 대시보드입니다.',
         },
         {
@@ -158,6 +158,10 @@ export const projects: Project[] = [
             { label: '판단', text: '특정 페이지 전용 리소스가 모든 사용자의 초기 로딩에 포함되는 건 불필요한 비용이라고 보고 코드 스플리팅을 적용했습니다. 그런데 분리한 뒤 직접 페이지로 이동해 보니, 나눈 파일을 받는 약 880ms 동안 빈 화면이 그대로 보였습니다.' },
             { label: '해결', text: '실제 페이지 레이아웃과 같은 구조의 스켈레톤 UI를 직접 만들어 로딩 화면으로 연결했습니다. 사용자가 로딩 중임을 알 수 있게 하고, 콘텐츠가 들어온 뒤에도 레이아웃이 밀리지 않도록 했습니다.' },
             { label: '결과', text: ['처음 서비스에 들어오는 모든 사용자의 초기 다운로드 크기가 ', { strong: '3,286KB에서 1,750KB로 47%' }, ' 줄었습니다. SDK 가이드로 이동하는 사용자는 880ms 동안 빈 화면을 보는 대신 ', { strong: '곧 나타날 페이지의 틀을 먼저 보게' }, ' 됐고, 페이지가 뜨지 않는 건지 의심할 일 없이 콘텐츠로 이어집니다.'] },
+          ],
+          image: [
+            { src: '/images/projects/boostad/bundle.webp', alt: 'Bundle Analyzer 기준 초기 번들 크기가 3,286KB에서 1,750KB로 47% 줄어든 비교', width: 1640, height: 1006 },
+            { src: '/images/projects/boostad/skeleton.webp', alt: '코드 스플리팅 후 880ms 동안 보이던 빈 화면을 실제 레이아웃과 같은 구조의 스켈레톤 UI로 대체한 전후 비교', width: 1640, height: 1006 },
           ],
           callout: '파일 크기를 줄이는 데서 끝내지 않고, 사용자가 기다리는 순간의 화면까지 다듬었습니다.',
         },
@@ -171,6 +175,7 @@ export const projects: Project[] = [
             { label: '해결', text: 'robots.txt와 sitemap.xml을 직접 작성하고, 로그인해야 볼 수 있는 대시보드·결제 페이지는 크롤링에서 제외했습니다. index.html에 설명과 공유 미리보기(OG) 메타 태그를 넣은 뒤 Search Console에서 색인을 요청했습니다. 페이지마다 탭 제목이 바뀌는 훅도 만들어, 모달이나 하위 페이지를 닫으면 이전 제목으로 돌아가게 했습니다.' },
             { label: '결과', text: ['색인 등록 다음 날부터, 아무것도 검색되지 않던 서비스가 구글 검색 결과에 나오기 시작했습니다. 2026년 2월 4일 "boostad" 검색에서는 ', { strong: '같은 이름의 기존 기업 사이트들보다 위인 1위' }, '로 노출됐고, 3월까지 간헐적으로 노출이 이어졌습니다.'] },
           ],
+          image: [{ src: '/images/projects/boostad/seo.webp', alt: '검색에 노출되지 않던 서비스가 robots.txt·sitemap.xml·메타 태그 작성 후 "boostad" 검색 결과 1위로 노출된 전후 비교', width: 1640, height: 1006 }],
           callout: '검색 결과에 실제로 나오는지, Search Console에서 게재 순위와 클릭까지 직접 확인했습니다.',
         },
         {
@@ -235,13 +240,12 @@ export const projects: Project[] = [
       ['이후 다른 팀의 웹 OS 코드베이스를 넘겨받아 2주간 리팩토링'],
       [{ strong: '테스트 기준을 CLAUDE.md로 직접 세우고' }, ' AI 초안을 검토해 커버리지 0% → 72%'],
     ],
-    thumbnail: { src: '/images/projects/web-os-emulator/thumb.webp', alt: 'Web OS Emulator 데스크톱 화면' }, // 지금은 placeholder — TODO(세비): 실제 이미지로 교체
+    thumbnail: { src: '/images/projects/web-os-emulator/thumb.webp', alt: 'Web OS Emulator 데스크톱 화면' },
     links: { notion: 'https://hammerhead-knuckle-22a.notion.site/Web-OS-Emulator-38a1dbafa86880fab2b7db5b8078e729' },
     detail: {
       eyebrow: 'Project 03 — Web · 2025',
       title: '여러 사람이 동시에 쓰는 실시간 웹 OS',
       summary: '브라우저에서 동작하는 멀티유저 OS 에뮬레이터를 팀과 함께 만들고, 이후 다른 팀의 코드베이스를 넘겨받아 테스트 안전망을 먼저 깔고 리팩토링했습니다.',
-      // TODO(세비): 지금은 회색 placeholder 이미지 — 같은 파일명으로 실제 이미지 교체
       heroImage: { src: '/images/projects/web-os-emulator/hero.webp', alt: 'Web OS Emulator 데스크톱 화면', width: 1640, height: 874 },
       meta: [
         { term: '역할', value: ['Frontend Developer', '4인 팀 (FE 2 · BE 2)'] },
@@ -274,6 +278,7 @@ export const projects: Project[] = [
             '제어판에서 테마를 바꾸면 앱 전체 색이 즉시 바뀌어야 했습니다.',
             '사용자 스토어의 테마 상태가 바뀌면 새 테마 객체를 앱 최상단에 주입하는 구조를 만들고, 컴포넌트에 직접 적혀 있던 색상을 모두 테마 값 참조로 바꿨습니다. 기본·다크·카카오 3종 테마를 제어판 설정과 연결했고, 이후에 만드는 컴포넌트도 따로 신경 쓰지 않아도 테마가 자동으로 적용됩니다.',
           ],
+          image: [{ src: '/images/projects/web-os-emulator/theme.webp', alt: '제어판에서 카카오·네이버·토스 3종 테마를 선택하면 앱 전체 색상이 즉시 바뀌는 화면', width: 1640, height: 1006 }],
         },
         {
           index: 3,
@@ -285,6 +290,7 @@ export const projects: Project[] = [
             { label: '검토', text: '초안마다 이 기준을 지키고 있는지를 보며 걸렀습니다. 예를 들어 잠긴 창 테스트 초안은 드래그 라이브러리에 잠금 설정(disabled) 값이 들어갔는지만 확인하고 있었습니다. 그건 설정을 확인한 것일 뿐, 창이 실제로 잠겼는지는 알 수 없습니다. 그래서 잠긴 창에서 닫기 버튼을 눌러도 창이 닫히지 않는지를 확인하도록 바꿨습니다.' },
             { label: '결과', text: ['14개 파일, 129개 테스트로 커버리지를 ', { strong: '0%에서 72%(구문 기준)' }, '까지 올려 목표를 넘겼습니다. 테스트를 쓰려면 데이터 형식과 이벤트 처리 방식을 정확히 알아야 해서, 테스트 작성 자체가 낯선 코드의 실제 동작을 파악하는 수단이 됐습니다. 이후 리팩토링에서는 기존 동작이 유지되는지를 테스트 실행으로 확인했습니다.'] },
           ],
+          image: [{ src: '/images/projects/web-os-emulator/test.webp', alt: '테스트 커버리지가 0%에서 72%로 오른 결과와, AI가 만든 테스트 초안을 기준에 맞춰 검토해 고친 예시', width: 1640, height: 1006 }],
           callout: '기준을 정한 사람이 저였기 때문에, AI가 만든 초안에서 무엇이 잘못됐는지 판단하고 고칠 수 있었습니다.',
         },
         {
@@ -295,6 +301,7 @@ export const projects: Project[] = [
             { label: '원인', text: '서버는 포커스 요청을 받을 때마다 창의 z-index를 1씩 올리는 구조였습니다. 그런데 포커스 처리 함수 안에서 같은 요청을 한 번 더 보내는 콜백이 다시 호출되고 있었습니다. 겉으로는 정상처럼 보였지만, 창을 한 번 클릭할 때마다 z-index가 2씩 올라가는 숨은 버그였습니다.' },
             { label: '결과', text: ['중복 호출을 지워 클릭 한 번에 요청이 한 번만 가도록 고쳤고, z-index는 ', { strong: '1씩만' }, ' 오르게 됐습니다. 창을 여러 개 쓸 때도 포커스 순서가 의도대로 유지됩니다.'] },
           ],
+          image: [{ src: '/images/projects/web-os-emulator/zindex.webp', alt: '창을 한 번 클릭할 때 포커스 요청이 중복 호출되어 z-index가 2씩 오르던 버그를 수정해 1씩만 오르게 바뀐 전후 비교', width: 1640, height: 1006 }],
           callout: '겉으로는 정상이었지만, 이벤트 흐름을 직접 따라가 보니 보였습니다.',
         },
         {
@@ -303,6 +310,7 @@ export const projects: Project[] = [
             '받는 사람의 관계·상황·연령과 예산을 입력하면, Gemini가 선물 5가지를 추천하고 각 추천을 카드로 보여줍니다.',
             '응답을 카드에 바로 넣을 수 있도록 상품명·추천 이유·브랜드·구매 팁·가격대가 항상 포함된 형식(JSON Schema)으로 받는 프롬프트를 설계했습니다. 화면에서는 입력 유효성 검사와 추천 완료 애니메이션을 만들고, 화면 컴포넌트에 React.memo를 적용해 불필요한 리렌더링을 줄였습니다.',
           ],
+          image: [{ src: '/images/projects/web-os-emulator/gift.webp', alt: '받는 사람 정보와 예산을 입력하면 Gemini가 JSON Schema로 고정된 형식에 맞춰 선물 5가지를 추천 카드로 보여주는 화면', width: 1640, height: 1006 }],
         },
         {
           title: '결과',
@@ -337,13 +345,12 @@ export const projects: Project[] = [
       ['와이어프레임부터 화면 구현까지 프론트엔드 전담'],
       ['서경 SW아카데미 경진대회 ', { strong: '동상' }],
     ],
-    thumbnail: { src: '/images/projects/namota-igeota/thumb.webp', alt: '나모타 이거타! 경로 안내 화면' }, // 지금은 placeholder — TODO(세비): 실제 이미지로 교체
+    thumbnail: { src: '/images/projects/namota-igeota/thumb.webp', alt: '나모타 이거타! 경로 안내 화면' },
     links: { github: 'https://github.com/2024-SW-Project/client' },
     detail: {
       eyebrow: 'Project 04 — Web · 2024',
       title: '기후동행카드로 탈 수 있는 지하철 노선 안내',
       summary: '기후동행카드 적용 여부를 고려한 지하철 경로 안내 서비스에서, 화면 설계부터 프론트엔드 구현, 서비스 데이터 구축까지 맡았습니다.',
-      // TODO(세비): 지금은 회색 placeholder 이미지 — 같은 파일명으로 실제 이미지 교체
       heroImage: { src: '/images/projects/namota-igeota/hero.webp', alt: '나모타 이거타! 경로 안내 화면', width: 1640, height: 874 },
       meta: [
         { term: '역할', value: ['Frontend Developer', '2인 팀 (FE 1 · BE 1)'] },
@@ -359,6 +366,7 @@ export const projects: Project[] = [
             '경로와 함께 급행 여부·상하행 방향·빠른 환승 위치·하차 문 위치를 안내하고, 자주 쓰는 경로는 즐겨찾기와 캘린더에 저장해 다시 조회할 수 있습니다. 실시간 열차 위치로 현재 운행 상황도 확인할 수 있습니다.',
             '저는 와이어프레임과 프로토타입을 Figma로 만들고, 프론트엔드 화면과 기능을 구현했습니다. ERD 설계와 공공데이터 수집·가공도 맡았습니다.',
           ],
+          image: [{ src: '/images/projects/namota-igeota/route.webp', alt: '같은 염창에서 강남까지, 일반 경로추천과 기후동행카드 경로추천의 결과가 다르게 나오는 비교 화면', width: 1640, height: 1006 }],
           callout: '가진 카드로 실제로 탈 수 있는 경로를, 출발하기 전에 알려주는 것이 이 서비스의 목표였습니다.',
         },
         {
@@ -370,6 +378,7 @@ export const projects: Project[] = [
             '역 목록 자체가 다른 경우도 있었습니다. 민간인통제구역 안이라 일반 승객이 자유롭게 이용할 수 없는 도라산역이, 한 데이터의 경의중앙선 역 목록에는 있고 다른 데이터에는 없었습니다.',
             '여러 API의 응답을 서비스가 쓰는 하나의 형태로 맞춰, 같은 역은 같은 데이터로 다룰 수 있게 했습니다. 이 과정에서 데이터를 구조화하고 통일하는 일도 개발의 중요한 부분이라는 걸 알게 됐습니다.',
           ],
+          image: [{ src: '/images/projects/namota-igeota/data.webp', alt: '역 코드·기후동행카드 이용 가능 역·역간 이동 시간 등 데이터마다 다르게 표기된 노선 이름과 역 코드를 하나의 형태로 통일하는 과정', width: 1640, height: 1006 }],
         },
         {
           index: 2,
@@ -380,6 +389,7 @@ export const projects: Project[] = [
             { label: '해결', text: '노선도를 보며 이웃한 역 사이의 이동 시간을 하나씩 직접 정리해 데이터셋을 만들었습니다. 이 데이터를 경로 탐색의 가중치로 어떻게 쓸지는 백엔드 팀원과 함께 고민했습니다.' },
             { label: '결과', text: '이동 시간이 채워지자, 경로를 실제 이동 시간 기준으로 비교할 수 있게 됐습니다. 기후동행카드 적용 여부를 반영한 경로 추천도 이 데이터 위에서 계산됐습니다.' },
           ],
+          image: [{ src: '/images/projects/namota-igeota/weight.webp', alt: '노선도의 이웃한 역 사이 이동 시간을 하나씩 정리해 역간 이동 시간 데이터셋을 직접 구축하는 과정', width: 1640, height: 1006 }],
           callout: '지금 생각해 보면 알고리즘보다 데이터를 만드는 시간이 더 오래 걸렸습니다.',
         },
         {
@@ -389,6 +399,7 @@ export const projects: Project[] = [
             '사용자가 노선도에서 안암역을 누르면, 단순히 그림을 누른 게 아니라 "안암역"이라는 데이터를 가져와 검색과 연결해야 했습니다.',
             'SVG 내부 구조를 하나씩 뜯어보며 어떤 요소가 어떤 역을 뜻하는지 직접 확인하고, 역을 누르면 바로 검색으로 이어지게 연결했습니다. SVG가 이미지이면서 동시에 데이터를 담은 문서라는 걸 이때 실감했습니다.',
           ],
+          image: [{ src: '/images/projects/namota-igeota/svgmap.webp', alt: 'SVG 노선도에서 역 이름을 누르면 해당 역이 바로 출발역·도착역 검색창에 입력되는 화면', width: 1640, height: 1006 }],
         },
         {
           title: '결과',
