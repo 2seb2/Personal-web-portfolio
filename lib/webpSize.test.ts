@@ -11,7 +11,14 @@ describe('readWebpSize', () => {
   });
 
   it('확장 형식(VP8X) 크기를 읽는다', () => {
-    expect(readWebpSize(read('article4/01.webp'))).toEqual({ width: 410, height: 296 });
+    // RIFF 헤더 + VP8X 청크: 24·27번째 바이트부터 3바이트씩 (가로-1, 세로-1)
+    const buffer = Buffer.alloc(30);
+    buffer.write('RIFF', 0, 'ascii');
+    buffer.write('WEBP', 8, 'ascii');
+    buffer.write('VP8X', 12, 'ascii');
+    buffer.writeUIntLE(410 - 1, 24, 3);
+    buffer.writeUIntLE(296 - 1, 27, 3);
+    expect(readWebpSize(buffer)).toEqual({ width: 410, height: 296 });
   });
 
   it('무손실(VP8L) 크기를 읽는다', () => {
