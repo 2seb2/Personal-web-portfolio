@@ -1,9 +1,12 @@
 import Image from 'next/image';
 import { RichText } from '@/components/ui/RichText';
+import { LightboxTrigger } from '@/features/lightbox/LightboxTrigger';
 import type { ProjectSection as ProjectSectionType } from '@/types/content';
 
 type ProjectSectionProps = {
   section: ProjectSectionType;
+  /** 이 섹션 첫 이미지의 갤러리 순서 (getProjectImages의 sectionStarts) */
+  imageStartIndex: number;
 };
 
 function Callout({ text }: { text: string }) {
@@ -14,7 +17,7 @@ function Callout({ text }: { text: string }) {
   );
 }
 
-export function ProjectSection({ section }: ProjectSectionProps) {
+export function ProjectSection({ section, imageStartIndex }: ProjectSectionProps) {
   return (
     <section className="flex w-full flex-col pt-11">
       <h2 className="type-heading-md text-fg">
@@ -36,15 +39,17 @@ export function ProjectSection({ section }: ProjectSectionProps) {
       ))}
 
       {section.image?.map((image, i) => (
-        <div key={i} className="relative mt-3 w-full overflow-hidden rounded-img bg-sunken">
-          <Image
-            src={image.src}
-            alt={image.alt}
-            width={image.width}
-            height={image.height}
-            className="w-full"
-          />
-        </div>
+        <LightboxTrigger key={i} index={imageStartIndex + i} alt={image.alt} className="mt-3 rounded-img">
+          <span className="relative block w-full overflow-hidden rounded-img bg-sunken">
+            <Image
+              src={image.src}
+              alt={image.alt}
+              width={image.width}
+              height={image.height}
+              className="w-full"
+            />
+          </span>
+        </LightboxTrigger>
       ))}
 
       {section.callout && <Callout text={section.callout} />}

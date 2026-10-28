@@ -41,6 +41,25 @@ export const site = {
     articles: { title: '아티클', description: '만들면서 배운 것과 회고를 기록합니다.' },
   },
 
+  /** 프로젝트 상세 이미지 라이트박스 */
+  lightbox: {
+    title: 'Project Gallery',
+    dialogLabel: '프로젝트 이미지 크게 보기',
+    open: (alt: string) => `${alt} — 크게 보기`,
+    close: '닫기',
+    prev: '이전 이미지',
+    next: '다음 이미지',
+    toolbar: '이미지 조작',
+    zoomOut: '축소',
+    zoomIn: '확대',
+    fit: '화면에 맞추기',
+    reveal: '본문에서 보기',
+    zoomLevel: '확대 비율 (화면 맞춤 크기 기준)',
+    thumbnails: '이미지 목록',
+    thumbnail: (order: number, alt: string) => `${order}번째 이미지: ${alt}`,
+    position: (order: number, total: number) => `${total}장 중 ${order}번째 이미지`,
+  },
+
   footer: {
     heading: '고민하고 노력한 결과를 마지막까지 봐주셔서 감사합니다.',
     note: '프론트엔드 신입 포지션을 찾고 있습니다.\n채용 제안이나 커피챗 모두 편하게 연락 주세요.',
