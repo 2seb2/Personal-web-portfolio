@@ -115,3 +115,27 @@ export function getArticleImages(article: Pick<ArticleDetail, 'title' | 'body'>)
     };
   });
 }
+
+/** 목록 한 쪽에 보이는 글 수 */
+export const ARTICLES_PER_PAGE = 8;
+
+/** 목록 n쪽 주소 — 1쪽은 /articles, 나머지는 /articles/page/n */
+export function getArticlePageHref(page: number): string {
+  return page === 1 ? '/articles' : `/articles/page/${page}`;
+}
+
+/** URL의 쪽 번호("2")를 숫자로 — 0으로 시작하거나 숫자가 아니면 undefined */
+export function parseArticlePage(value: string): number | undefined {
+  return /^[1-9]\d*$/.test(value) ? Number(value) : undefined;
+}
+
+/** n쪽에 보일 글과 전체 쪽 수. 없는 쪽이면 undefined */
+export function paginateArticles<T>(
+  articles: T[],
+  page: number,
+  perPage = ARTICLES_PER_PAGE,
+): { items: T[]; totalPages: number } | undefined {
+  const totalPages = Math.max(1, Math.ceil(articles.length / perPage));
+  if (!Number.isInteger(page) || page < 1 || page > totalPages) return undefined;
+  return { items: articles.slice((page - 1) * perPage, page * perPage), totalPages };
+}

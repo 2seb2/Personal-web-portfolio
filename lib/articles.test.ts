@@ -3,7 +3,10 @@ import {
   formatArticleDate,
   getArticle,
   getArticleImages,
+  getArticlePageHref,
   getArticles,
+  paginateArticles,
+  parseArticlePage,
   parseArticle,
   sortArticles,
 } from './articles';
@@ -105,5 +108,38 @@ describe('getArticleImages', () => {
     for (const { id } of getArticles()) {
       expect(() => getArticleImages(getArticle(id)!)).not.toThrow();
     }
+  });
+});
+
+describe('paginateArticles', () => {
+  const list = Array.from({ length: 18 }, (_, i) => i + 1);
+
+  it('8개씩 나누고 마지막 쪽은 남은 만큼', () => {
+    expect(paginateArticles(list, 1)).toEqual({ items: [1, 2, 3, 4, 5, 6, 7, 8], totalPages: 3 });
+    expect(paginateArticles(list, 3)).toEqual({ items: [17, 18], totalPages: 3 });
+  });
+
+  it('없는 쪽이면 undefined', () => {
+    expect(paginateArticles(list, 0)).toBeUndefined();
+    expect(paginateArticles(list, 4)).toBeUndefined();
+    expect(paginateArticles(list, 1.5)).toBeUndefined();
+  });
+
+  it('글이 없어도 1쪽은 있다', () => {
+    expect(paginateArticles([], 1)).toEqual({ items: [], totalPages: 1 });
+  });
+});
+
+describe('parseArticlePage · getArticlePageHref', () => {
+  it('양의 정수만 쪽 번호로 읽는다', () => {
+    expect(parseArticlePage('2')).toBe(2);
+    expect(parseArticlePage('02')).toBeUndefined();
+    expect(parseArticlePage('0')).toBeUndefined();
+    expect(parseArticlePage('abc')).toBeUndefined();
+  });
+
+  it('1쪽은 /articles, 나머지는 /articles/page/n', () => {
+    expect(getArticlePageHref(1)).toBe('/articles');
+    expect(getArticlePageHref(3)).toBe('/articles/page/3');
   });
 });
