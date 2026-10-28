@@ -150,9 +150,19 @@ describe('getArticleListPage', () => {
     expect(getArticleListPage([], 1)).toEqual({ pinned: [], items: [], totalPages: 1 });
   });
 
-  it('고정 글이 3편을 넘으면 실패한다', () => {
-    const many = list.map((a) => ({ ...a, pinned: a.n <= 4 }));
-    expect(() => getArticleListPage(many, 1)).toThrow('Pinned 아티클은 최대 3편입니다 (지금 4편)');
+  it('고정 글이 7편이면 1쪽은 고정 글만, 날짜순은 2쪽부터', () => {
+    const seven = list.map((a) => ({ ...a, pinned: a.n <= 7 }));
+    const p1 = getArticleListPage(seven, 1)!;
+    expect(ns(p1.pinned)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    expect(p1.items).toEqual([]);
+    expect(p1.totalPages).toBe(4);
+    expect(ns(getArticleListPage(seven, 2)!.items)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    expect(ns(getArticleListPage(seven, 4)!.items)).toEqual([15, 16, 17, 18]);
+  });
+
+  it('고정 글이 7편을 넘으면 실패한다', () => {
+    const many = list.map((a) => ({ ...a, pinned: a.n <= 8 }));
+    expect(() => getArticleListPage(many, 1)).toThrow('Pinned 아티클은 최대 7편입니다 (지금 8편)');
   });
 });
 

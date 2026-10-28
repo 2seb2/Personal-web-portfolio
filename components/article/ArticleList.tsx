@@ -77,11 +77,14 @@ export function ArticleList({ pinned, articles }: ArticleListProps) {
           ))}
         </ul>
       )}
-      <ul className={`flex flex-col gap-3.5 ${pinned.length > 0 ? 'pt-7' : 'pt-6.5'}`}>
-        {articles.map((article) => (
-          <ArticleCard key={article.id} article={article} />
-        ))}
-      </ul>
+      {/* 고정 글이 7편이면 1쪽에는 날짜순 글이 없다 */}
+      {articles.length > 0 && (
+        <ul className={`flex flex-col gap-3.5 ${pinned.length > 0 ? 'pt-7' : 'pt-6.5'}`}>
+          {articles.map((article) => (
+            <ArticleCard key={article.id} article={article} />
+          ))}
+        </ul>
+      )}
     </>
   );
 }

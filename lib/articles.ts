@@ -122,7 +122,7 @@ export function getArticleImages(article: Pick<ArticleDetail, 'title' | 'body'>)
 /** 목록 한 쪽에 보이는 카드 수 (1쪽은 Pinned 포함) */
 export const ARTICLES_PER_PAGE = 7;
 /** Pinned로 올릴 수 있는 최대 글 수 */
-export const MAX_PINNED_ARTICLES = 3;
+export const MAX_PINNED_ARTICLES = 7;
 
 /** 목록 n쪽 주소 — 1쪽은 /articles, 나머지는 /articles/page/n */
 export function getArticlePageHref(page: number): string {
@@ -136,7 +136,7 @@ export function parseArticlePage(value: string): number | undefined {
 
 /**
  * 목록 n쪽 구성 — 원칙은 docs/design-system.md '쪽 나누기 원칙'.
- * 1쪽: Pinned(최신순, 최대 3편) + 날짜순 글로 남은 자리 채움. 2쪽부터: 날짜순 이어서 perPage개씩.
+ * 1쪽: Pinned(최신순, 최대 7편) + 날짜순 글로 남은 자리 채움. 2쪽부터: 날짜순 이어서 perPage개씩.
  * 고정 글은 날짜순 목록에서 빼지 않는다. 없는 쪽이면 undefined.
  * articles는 날짜순으로 정렬된 상태로 받는다(getArticles).
  */

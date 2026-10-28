@@ -88,7 +88,7 @@ export type Article = {
   stacks: string[];
   /** 목록 카드 요약 */
   excerpt: string;
-  /** 목록 1쪽 맨 앞에 고정 (최대 3편). frontmatter에 없으면 false */
+  /** 목록 1쪽 맨 앞에 고정 (최대 7편). frontmatter에 없으면 false */
   pinned: boolean;
 };
 
