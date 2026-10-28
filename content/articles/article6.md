@@ -53,8 +53,6 @@ React 공식 문서에서는 데이터 fetching을 useEffect에서 하는 것에
 
 > "Fetching data with Effects is a popular way to fetch data, but it's very manual and has significant downsides."
 — [React 공식 문서: You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect#fetching-data)
-> 
-> 
 > "Effect로 데이터를 가져오는 것은 흔한 방법이지만, 매우 수동적이고 큰 단점들이 있습니다."
 > 
 
@@ -110,8 +108,6 @@ React Router의 Loader는 이런 순서로 동작:
     
     > "Route loaders are called before the route component renders and provide data to the component through useLoaderData."
     — [React Router 공식 문서: loader](https://reactrouter.com/en/main/route/loader)
-    > 
-    > 
     > 번역: "Route loader는 컴포넌트가 렌더되기 전에 호출되고, `useLoaderData`를 통해 컴포넌트에 데이터를 제공합니다."
     > 
 
@@ -180,8 +176,6 @@ const router = createBrowserRouter([
     
     > "All route loaders are called in parallel to maximize data loading performance."
     — [React Router 공식 문서: loader](https://reactrouter.com/en/main/route/loader)
-    > 
-    > 
     > 번역: "모든 route loader는 병렬로 호출되어 데이터 로딩 성능을 최대화합니다."
     > 
 
@@ -317,8 +311,6 @@ loader에서 `throw`로 에러를 던지면 → React Router가 가장 가까운
     
     > "When errors are thrown in loaders, React Router will render the route's errorElement."
     — [React Router 공식 문서: errorElement](https://reactrouter.com/en/main/route/error-element)
-    > 
-    > 
     > 번역: "loader에서 에러가 발생하면, React Router는 route의 `errorElement`를 렌더합니다."
     > 
 
@@ -401,8 +393,6 @@ React 공식 문서에서는 데이터 fetching에 대해 이렇게 말함:
 
 > "If you use a framework, use its data fetching mechanism. Modern React frameworks like Next.js and Remix have built-in data fetching mechanisms that are more efficient than fetching data in Effects."
 — [React 공식 문서: Fetching Data](https://react.dev/reference/react/useEffect#fetching-data-with-effects)
-> 
-> 
 > 번역: "프레임워크를 사용한다면, 프레임워크의 데이터 fetching 메커니즘을 사용하세요. Next.js나 Remix 같은 현대적인 React 프레임워크는 Effect에서 데이터를 가져오는 것보다 효율적인 내장 데이터 fetching 메커니즘을 가지고 있습니다."
 > 
 
@@ -504,8 +494,6 @@ function Dashboard() {
     
     > "defer allows you to defer values returned from loaders by passing promises instead of resolved values."
     — [React Router 공식 문서: defer](https://reactrouter.com/en/main/fetch/redirect)
-    > 
-    > 
     > 번역: "`defer`는 resolved된 값 대신 promise를 전달하여 loader에서 반환하는 값을 지연시킬 수 있게 합니다."
     > 
 
@@ -536,8 +524,6 @@ React Router 공식 문서:
 
 > "redirect is a helper that creates a Response that will redirect the user to another route."
 — [React Router 공식 문서: redirect](https://reactrouter.com/en/main/utils/defer)
-> 
-> 
 > 번역: "`redirect`는 사용자를 다른 route로 리다이렉트할 Response를 생성하는 헬퍼입니다."
 > 
 

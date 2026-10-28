@@ -39,12 +39,10 @@ SDK는 그냥 기능 여러개를 묶어놓은 라이브러리라기 보다는, 
     
     > "SDK는 개발자를 위한 플랫폼별 빌드 도구 세트입니다. 소프트웨어를 개발하고 실행하는 데 필요한 모든 것을 한 곳에 모아둡니다."
     — [출처](https://aws.amazon.com/ko/what-is/sdk/)
-    > 
 - GitHub 공식 문서에서의 SDK설명:
     
     > "SDK는 특정 플랫폼에서 소프트웨어 애플리케이션을 만들 수 있게 해주는 도구, 라이브러리, 문서, 코드 샘플, 프로세스, 가이드의 모음이다."
     — [출처](https://github.com/resources/articles/what-is-an-sdk)
-    > 
 
 ### 단순 라이브러리 vs SDK
 
@@ -112,7 +110,6 @@ SDK의 핵심 역할은 복잡한 과정을 숨기고, 개발자가 쉽게 쓸 �
 
 > **참고**: 
 S3 SDK는 주로 **서버(Node.js, Lambda)에서 파일을 업로드/다운로드**할 때 사용. 브라우저에서 직접 S3에 업로드할 때는 보통 **Presigned URL** 방식을 쓰고, SDK는 그 URL을 생성하는 데 사용.
-> 
 - SDK 없이 쓰면
     - HTTP 요청 직접 만들고
     - AWS 인증용 서명을 계산하고 (복잡한 암호화 과정)
@@ -173,7 +170,6 @@ await client.send(command);
 > **참고**: 
 위 코드는 AWS SDK v3 (최신) 문법. v2에서는 `new AWS.S3().putObject().promise()` 형태였지만, v3에서는 Command 패턴을 사용
 — [AWS SDK v3 공식 문서 예제](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/javascript_s3_code_examples.html)
-> 
 
 ⇒ 이게 바로 “S3라는 서비스를 쉽게 쓰게 해주는 개발 도구 세트”라는 말의 구체적인 의미!
 
@@ -193,7 +189,6 @@ SDK를 쓰면 `akao.Auth.authorize()` 한 줄로 끝.
     
     > "SDK(Software Development Kit)는 애플리케이션 개발 도구에요. 다른 회사에서 구현한 기능을 바로 내 애플리케이션에 사용할 수 있게 해줘요."
     — [출처](https://docs.tosspayments.com/resources/glossary/sdk)
-    > 
 
 ---
 
@@ -230,7 +225,6 @@ SDK를 쓰면 `akao.Auth.authorize()` 한 줄로 끝.
     
     > "SDK는 지원하는 플랫폼을 위해 다른 여러 리소스와 함께 API를 포함할 수 있습니다."
     — [출처](https://aws.amazon.com/ko/compare/the-difference-between-sdk-and-api/)
-    > 
 
 ---
 
@@ -246,7 +240,6 @@ SDK를 쓰면 `akao.Auth.authorize()` 한 줄로 끝.
     
     > "카카오디벨로퍼스에서 제공하는 JavaScript SDK 사용 방법을 안내합니다."
     — [출처](https://developers.kakao.com/docs/latest/ko/javascript/getting-started)
-    > 
 
 ### SDK 없이 vs SDK 사용 비교
 

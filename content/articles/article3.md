@@ -47,14 +47,12 @@ W3C 명세에서도 분석(analytics) 데이터 전송을 위해 만들어졌다
 > W3C Beacon 명세:
 "This specification defines an interface that web developers can use to schedule asynchronous and non-blocking delivery of data that minimizes resource contention with other time-critical operations."
 — [W3C Beacon Specification](https://www.w3.org/TR/beacon/)
-> 
 
 MDN에서도 명시적으로 analytics 용도를 언급함:
 
 > MDN 공식 문서:
 "The navigator.sendBeacon() method asynchronously sends an HTTP POST request containing a small amount of data to a web server. It's intended to be used for sending analytics data to a web server."
 — [MDN: Navigator.sendBeacon()](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon)
-> 
 
 ---
 
@@ -91,7 +89,6 @@ document.addEventListener('visibilitychange', () => {
 > MDN 공식 문서:
 "The Document.visibilityState read-only property returns the visibility of the document."
 — [MDN: Document.visibilityState](https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilityState)
-> 
 
 ### visibilityState의 종류
 
@@ -146,7 +143,6 @@ document.addEventListener('visibilitychange', () => {
 > Chrome 공식 문서:
 "Background tabs have their timers throttled to only fire at most once per second."
 — [Chrome Developers: Background Tabs](https://developer.chrome.com/blog/background-tabs/)
-> 
 
 **구체적으로 어떻게 제한되나?**
 
@@ -193,7 +189,6 @@ setInterval(() => { seconds++; }, 1000);
 
 > ℹ️ 이 실습은 throttling 현상 확인이 목적임.
 코드는 최대한 단순하게 작성됐고, 실제 프로덕션 코드와는 다름.
-> 
 
 - timer-test.html
     
@@ -409,7 +404,6 @@ Page Lifecycle API는 이때 "정지되기 전에 상태 저장"하게 하는 �
 > Google Developers 문서:
 "The Page Lifecycle API brings app lifecycle features common on mobile operating systems to the web."
 — [Page Lifecycle API](https://developer.chrome.com/blog/page-lifecycle-api/)
-> 
 
 **모바일만 해당되나?**
 
@@ -585,7 +579,6 @@ freeze되면 `setTimeout`, `fetch` 등 **모든 JS 실행이 멈춤**.
 
 > ⚠️ Chrome 전용!freeze/resume 이벤트는 Chrome 68+ 에서만 지원됨.
 Safari, Firefox에서는 이 이벤트가 발생하지 않음.
-> 
 
 ### 실무에서의 위치
 
@@ -676,7 +669,6 @@ window.addEventListener('unload', () => {
 > MDN 공식 문서:
 "The unload event is fired when the document or a child resource is being unloaded... Warning: Developers should avoid using this event."
 — [MDN: unload event](https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event)
-> 
 
 **bfcache(Back-Forward Cache)란?**
 
@@ -705,7 +697,6 @@ bfcache는 페이지 상태를 "그대로" 저장해뒀다가 복원하는 건�
 > web.dev 문서:
 "Never use the unload event... pages that use unload handlers are never put into the back/forward cache."
 — [web.dev: bfcache](https://web.dev/bfcache/)
-> 
 
 **결론:** `unload` 대신 `pagehide`를 사용하자! (pagehide는 bfcache와 호환됨)
 
@@ -868,7 +859,6 @@ fetch('/api/log', {
 > MDN 공식 문서:
 "The keepalive option can be used to allow the request to outlive the page."
 — [MDN: fetch() keepalive](https://developer.mozilla.org/en-US/docs/Web/API/fetch#keepalive)
-> 
 
 // fetch keepalive는 unload-safe를 위한 “전달 허용(flag)” 옵션일 뿐이고, BFCache나 네트워크 스케줄링·OS suspend·백그라운드 전환까지 포함한 전체 lifecycle 최적화는 거의 고려하지 않음.
 
@@ -890,7 +880,6 @@ ex. 퇴장 로깅-beacon, api처리확장-fetch keepalive
 
 > ℹ️ 이 실습은 Page Visibility API 동작 원리 이해가 목적임.
 실제 프로덕션에서는 사용자 설정(백그라운드 재생 허용), 오디오/비디오 분리 처리 등 추가 고려사항이 있음.
-> 
 
 - **video-visibility.html**
     
@@ -1108,7 +1097,6 @@ document.addEventListener('visibilitychange', () => {
 > ℹ️ 이 실습은 Beacon API 동작 원리 이해가 목적임.
 전송 확인은 webhook.site라는 무료 서비스를 사용함.
 프로덕션에서는 실제 서버 엔드포인트, 에러 핸들링, 개인정보 고려 등이 추가로 필요함.
-> 
 
 ### 사전 준비: webhook.site 설정
 
@@ -1124,7 +1112,6 @@ Beacon 요청이 실제로 전송되는지 확인하려면 받아줄 서버가 �
 > ⚠️ 왜 webhook.site를 쓰나?
 Beacon은 "fire-and-forget" 방식이라 페이지가 종료된 후 브라우저가 별도로 전송함.
 그래서 Network 탭에서는 안 보일 수 있음! 실제 서버로 보내야 확실하게 확인 가능.
-> 
 
 // webhook.site: 외부에서 HTTP 요청을 보내면 그 요청 내용을 바로 확인할 수 있게 해주는 서비스
 
@@ -1476,7 +1463,6 @@ navigator.sendBeacon(API_ENDPOINT, blob);
 > 💡 Network 탭에서 안 보여도 정상!
 Beacon은 페이지 종료 후 브라우저가 별도로 전송하기 때문에 Network 탭에 안 잡힐 수 있음.
 webhook.site에서 요청이 보이면 정상 동작한 것!
-> 
 
 ---
 
