@@ -41,6 +41,15 @@ export const site = {
     articles: { title: '아티클', description: '만들면서 배운 것과 회고를 기록합니다.' },
   },
 
+  /** 아티클 목록 쪽 나누기 */
+  articleList: {
+    pageTitle: (page: number) => `아티클 ${page}쪽`,
+    pagination: '아티클 목록 쪽',
+    prev: '이전',
+    next: '다음',
+    page: (page: number) => `${page}쪽`,
+  },
+
   /** 아티클 상세 */
   articleDetail: {
     back: '← All articles',
