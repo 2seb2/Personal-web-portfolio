@@ -68,14 +68,18 @@ function sizeOf(element: HTMLElement): Size {
   return { width: element.clientWidth, height: element.clientHeight };
 }
 
+/** 갤러리 이름 — 기본은 프로젝트용(site.lightbox) */
+export type LightboxLabels = { title: string; dialogLabel: string };
+
 type LightboxProps = {
   images: ProjectImage[];
+  labels?: LightboxLabels;
   initialIndex: number;
   /** reveal: '본문에서 보기'로 닫았는지 */
   onClose: (options: { index: number; reveal: boolean }) => void;
 };
 
-export function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
+export function Lightbox({ images, labels = text, initialIndex, onClose }: LightboxProps) {
   const prefersReducedMotion = useReducedMotion();
   const dialogRef = useRef<HTMLDialogElement>(null);
   /** 이미지가 움직일 수 있는 전체 영역 (확대 시 좌우 버튼 아래까지) */
@@ -335,7 +339,7 @@ export function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
   return (
     <dialog
       ref={dialogRef}
-      aria-label={text.dialogLabel}
+      aria-label={labels.dialogLabel}
       data-theme="dark"
       // ESC: 브라우저가 바로 닫지 않게 막고 상태로 닫는다
       onCancel={(event) => {
@@ -360,7 +364,7 @@ export function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
         {/* 상단: 위치 + 닫기 */}
         <div {...BACKDROP_ATTR} className="flex h-14 shrink-0 items-center justify-between pr-2 pl-5 md:pr-4 md:pl-8">
           <p className="type-mono-label text-fg-secondary uppercase" aria-hidden="true">
-            {text.title} · <span className="text-fg">{order(index + 1)}</span> / {order(total)}
+            {labels.title} · <span className="text-fg">{order(index + 1)}</span> / {order(total)}
           </p>
           <IconButton label={text.close} onClick={() => close()}>
             <CloseIcon />

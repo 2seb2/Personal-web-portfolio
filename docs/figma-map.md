@@ -22,6 +22,7 @@
 | Projects | `140:353` | `142:389` | 목록 |
 | Articles | `140:442` | `142:475` | 목록(목데이터) |
 | Project Detail (지켜줘홈즈) | `155:1088` | `155:1271` | 상세 |
+| Article Detail (부스트캠프 챌린지 회고) | `237:1847` | `240:1864` | 상세, Markdown 본문 예시 |
 
 ### Keyword States (Filled, 키워드별)
 | 키워드 | Light | Dark |

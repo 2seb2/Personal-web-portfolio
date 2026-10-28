@@ -42,6 +42,7 @@ export default function ComponentsPage() {
         <Tag label="CS" />
         <Tag label="Apollo Client" />
         <Tag label="React Query" />
+        <Tag label="스터디" tone="neutral" />
       </Section>
 
       <Section title="Theme Toggle">

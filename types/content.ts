@@ -75,12 +75,26 @@ export type Project = {
   detail?: ProjectDetail;
 };
 
-// ---------- Articles (목데이터. 노션 연동은 후순위) ----------
+// ---------- Articles (content/articles/{id}.md의 frontmatter) ----------
 export type Article = {
+  /** 파일명과 같다. 상세 URL /articles/{id} */
   id: string;
   title: string;
-  date: string; // YYYY.MM.DD
-  tags: string[];
+  /** YYYY-MM-DD. 화면에는 "2026년 3월 9일" */
+  date: string;
+  /** 노션 '종류' — 회색 태그 */
+  kinds: string[];
+  /** 노션 '기술 스택' — 주황 태그 */
+  stacks: string[];
+  /** 목록 카드 요약 */
   excerpt: string;
-  href?: string;
 };
+
+/** 상세 페이지용 — frontmatter + Markdown 본문 */
+export type ArticleDetail = Article & { body: string };
+
+/**
+ * 아티클 본문 이미지 — 화면 순서대로 라이트박스 갤러리가 된다.
+ * alt는 라이트박스·버튼 이름(캡션이 비면 대체 이름), offset은 Markdown 본문에서 `![`의 위치.
+ */
+export type ArticleImage = ProjectImage & { caption: string; offset: number };

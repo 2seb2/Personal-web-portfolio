@@ -1,2 +1,17 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
+
+/* 아티클 코드 블록 문법 강조 — rehype-highlight가 붙이는 class에 코드 색 토큰 연결 */
+@layer components {
+  .hljs-comment,
+  .hljs-quote { color: var(--sebi-code-comment); }
+  .hljs-keyword,
+  .hljs-name,
+  .hljs-selector-tag,
+  .hljs-variable.language_ { color: var(--sebi-code-keyword); }
+  .hljs-string,
+  .hljs-regexp { color: var(--sebi-code-string); }
+  .hljs-number,
+  .hljs-literal,
+  .hljs-symbol { color: var(--sebi-code-literal); }
+}

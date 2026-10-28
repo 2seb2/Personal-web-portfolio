@@ -41,6 +41,21 @@ export const site = {
     articles: { title: '아티클', description: '만들면서 배운 것과 회고를 기록합니다.' },
   },
 
+  /** 아티클 상세 */
+  articleDetail: {
+    back: '← All articles',
+    /** 본문 이미지 라이트박스 */
+    gallery: { title: 'Article Gallery', dialogLabel: '아티클 이미지 크게 보기' },
+    /** alt(캡션)가 빈 본문 이미지를 라이트박스·버튼에서 부르는 이름 */
+    imageAlt: (title: string, order: number) => `${title} 본문 이미지 ${order}`,
+  },
+
+  /** 프로젝트 상세 상단 외부 링크 아이콘 */
+  projectLinks: {
+    github: 'GitHub 저장소 열기',
+    notion: 'Notion 문서 열기',
+  },
+
   /** 프로젝트 상세 이미지 라이트박스 */
   lightbox: {
     title: 'Project Gallery',

@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import type { ReactNode } from 'react';
 import { useReducedMotion } from 'motion/react';
 import type { ProjectImage } from '@/types/content';
-import { Lightbox } from './Lightbox';
+import { Lightbox, type LightboxLabels } from './Lightbox';
 
 type LightboxContextValue = {
   open: (index: number, opener: HTMLElement) => void;
@@ -41,12 +41,14 @@ function lockScroll() {
 }
 
 type LightboxProviderProps = {
-  /** 현재 프로젝트 상세에 보이는 이미지 전체, 화면 순서대로 */
+  /** 현재 상세 페이지에 보이는 이미지 전체, 화면 순서대로 */
   images: ProjectImage[];
+  /** 갤러리 이름 — 없으면 프로젝트용 */
+  labels?: LightboxLabels;
   children: ReactNode;
 };
 
-export function LightboxProvider({ images, children }: LightboxProviderProps) {
+export function LightboxProvider({ images, labels, children }: LightboxProviderProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const openerRef = useRef<HTMLElement | null>(null);
   const restoreScrollRef = useRef<(() => void) | null>(null);
@@ -91,7 +93,7 @@ export function LightboxProvider({ images, children }: LightboxProviderProps) {
     <LightboxContext.Provider value={value}>
       {children}
       {openIndex !== null && (
-        <Lightbox images={images} initialIndex={openIndex} onClose={handleClose} />
+        <Lightbox images={images} labels={labels} initialIndex={openIndex} onClose={handleClose} />
       )}
     </LightboxContext.Provider>
   );

@@ -109,7 +109,9 @@
 
 ---
 
-## 6단계 · (후순위) 아티클 노션 연동
-- getArticles() 내부만 노션 API로 교체, UI 변경 없음
-- 노션 이미지 URL은 약 1시간 후 만료 → ISR(`revalidate`) 또는 빌드 시 이미지 저장 처리
-- API 토큰은 Vercel 환경 변수
+## 6단계 · (후순위) 아티클 자동화 (Notion → n8n → GitHub)
+- 지금 아티클은 `content/articles/{id}.md` + `public/images/articles/{id}/`를 직접 올린다
+- 자동화는 같은 형식의 파일을 만들어 커밋만 한다 — 사이트 코드(`lib/articles.ts`, 페이지)는 바꾸지 않음
+- frontmatter 검증(`parseArticle`)이 빌드에서 형식 오류를 막는다
+- 노션 이미지 URL은 약 1시간 후 만료 → 다운로드해 webp로 저장한 뒤 경로 교체
+- '발행' 상태에서만 동기화, 처음엔 PR로 검토. 변환 못 한 블록은 동기화 실패로 처리
