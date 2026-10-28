@@ -89,7 +89,7 @@ Figma `v2 — Design System` 섹션(node `156:1505`)의 요약. 값은 `styles/t
 | 히어로 문구 블록 | 폭 846 고정, 화면 중앙 배치, 내부 좌측 정렬 |
 | 히어로 링 | 중심 (756, 528) · 반지름 610 × 330 — 프레임(내비 포함) 기준, 화면 폭에 비례 |
 | 프로젝트 그리드 | 2열, 카드 469 |
-| 아티클 그리드 | 3열 |
+| 아티클 목록 | 1열 가로형 카드, 간격 14, 한 쪽 8개 + 페이지네이션 |
 
 ---
 
@@ -101,7 +101,7 @@ Figma `v2 — Design System` 섹션(node `156:1505`)의 요약. 값은 `styles/t
 |---|---|---|---|
 | Keyword Pill | `124:31` | Default / Hover | `<button aria-pressed>`, 패딩 12·24, `rounded-pill`, 테두리 1.5 `line`, `bg-surface`, `type-label-pill text-fg`, `shadow-sm`. Hover: 테두리 `brand`, 라이트는 `shadow-md`. 0.18s |
 | Nav Pill | `139:152` | Default / Hover | `<a href>`, `bg-inverse text-fg-inverse`, 라벨 + `→`, 간격 8. Hover: 간격 14(화살표가 벌어짐) + 테두리 1.5 `brand` + `shadow-md` |
-| Tag | `135:99` | tone: brand / neutral | 패딩 4·8, `rounded-card`, 테두리 1, `type-label-tag`. brand(기술 스택): `bg-brand/12` + 테두리 `brand` + `text-brand-text`. neutral(아티클 종류): `bg-sunken` + 테두리 `line` + `text-fg-secondary` — **Figma 변형 아직 없음** |
+| Tag | `135:99` | tone: brand / neutral | 패딩 4·8, `rounded-card`, 테두리 1, `type-label-tag`. brand(기술 스택): `bg-brand/12` + 테두리 `brand/25` + `text-brand-text`. neutral(아티클 종류): `bg-sunken` + 테두리 `line` + `text-fg-secondary` — **Figma 변형 아직 없음**(인스턴스 색 덮어쓰기로 그림). 테두리 농도는 배경 대비 회색·주황이 비슷하게(약 1.1~1.3배) |
 | Project Card | `151:873` | Default / Hover | 폭 469, 패딩 12, `rounded-card-lg`. 썸네일 445×352 `rounded-card bg-sunken`. 메타 `type-mono-xs`(번호·이름 `brand-text`, 기간 `fg-muted`), 제목 `type-heading-md`, 글머리표 `type-body-sm`(강조 `type-body-sm-strong`). Hover: `bg-brand/8` + 테두리 1.5 `brand` + `shadow-md`, 0.2s. 크기 변화 없음(테두리는 inset) |
 | Theme Toggle | `155:1087` | Light / Dark | 해·달 2칸, 칸 30×30 원형, 외곽 패딩 3·간격 2, `bg-surface` + 테두리 `line`. 활성 칸 `bg-inverse` + 아이콘 `fg-inverse`, 비활성 아이콘 `fg-secondary` |
 | Tidy Button | `166:1665` | Default / Hover | ↺ 아이콘 12 + `칩 정리하기`, 간격 6, `type-mono-xs text-fg-secondary`. Hover: `brand-text` + 밑줄. 자유 배치된 칩이 있을 때만 Hint 오른쪽에 표시 |
@@ -120,3 +120,9 @@ Figma `v2 — Design System` 섹션(node `156:1505`)의 요약. 값은 `styles/t
 - 헤더: 날짜("2026년 3월 9일") `type-mono-sm brand-text` → 제목 `type-display-lg`(위 14) → 태그(위 18, 간격 6, 종류 neutral 먼저 · 기술 스택 brand) → 아래 36 뒤 구분선 `line`
 - 본문(`components/article/ArticleBody.tsx`, 위 44 · 아래 44): `##` `type-heading-md`(위 44), `###` `type-body-md-strong`(위 32), `####` `type-body-md-strong fg-secondary`(위 24), 문단 `type-body-md fg-strong`(위 12), 굵게 `brand-text`(제목 안에서는 제목 색), 인용은 상세 인용 박스와 같음
 - Figma에 없는 요소(코드에서 먼저 정함): 코드 블록 `bg-sunken rounded-img` 패딩 16·18 `type-mono-sm` + 문법 강조(언어가 적힌 블록만, rehype-highlight → `app/globals.css`의 `.hljs-*`): 키워드·JSX 태그 `--sebi-code-keyword`(라이트 #B35100 · 다크 #F49303), 주석 `--sebi-code-comment`(#3D7A4A · #8CC08F), 문자열 `--sebi-code-string`(#1F5F99 · #8CB8E0), 숫자·true·null `--sebi-code-literal`(#7A3FA8 · #C3A0E3) — 모두 bg-sunken 위 4.5:1↑, 인라인 코드 `bg-sunken` 좌우 4 `type-mono-sm`, 표 테두리 `line`·머리글 `bg-sunken type-body-sm-strong`·본문 `type-body-sm`, 이미지 원본 크기(열 폭까지) `rounded-img` + 캡션 `type-mono-xs fg-muted`
+
+### 아티클 목록 (Figma `264:1881` / `264:2105`)
+- 카드: 열 폭 전체, `rounded-card` + 테두리 `line` + `bg-surface`, 패딩 가로 26 · 세로 24, 안쪽 간격 8 — 날짜 `type-mono-xs fg-secondary` → 제목 `type-heading-md` → 요약 `type-body-sm fg-secondary` → 태그(위 6 추가, 간격 6, 종류 neutral → 기술 스택 brand)
+- 호버: 프로젝트 카드와 같음 — 테두리 `brand` + `bg-brand/8` + `shadow-md`, 0.2s
+- 페이지네이션: 목록 아래 48, 가운데. `‹ 이전` · 쪽 번호(36×36 원) · `다음 ›`, `type-body-sm-medium`. 현재 쪽 `bg-inverse text-fg-inverse`, 나머지 `fg-secondary`(호버 `fg`), 첫·마지막 쪽의 이전·다음은 `fg-placeholder`
+- 주소: 1쪽 `/articles`, 2쪽부터 `/articles/page/n` (모두 정적 생성)

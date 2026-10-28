@@ -24,14 +24,15 @@ app/
   page.tsx              홈 (Hero)
   projects/page.tsx     프로젝트 목록
   projects/[slug]/page.tsx  프로젝트 상세 (generateStaticParams)
-  articles/page.tsx     아티클 목록
+  articles/page.tsx     아티클 목록 1쪽 (8개씩)
+  articles/page/[page]/page.tsx  아티클 목록 2쪽부터
   articles/[slug]/page.tsx  아티클 상세 (content/articles/*.md, generateStaticParams)
   (dev)/components/page.tsx 개발용 컴포넌트 확인 페이지 (프로덕션 빌드에서 404)
 components/
   ui/                   KeywordPill, NavPill, Tag, ProjectCard, ThemeToggle, TidyButton
   layout/               Nav, Footer
   project/              상세 페이지 섹션 블록
-  article/              ArticleBody (Markdown 본문 렌더링)
+  article/              ArticleBody (Markdown 본문), ArticleList·ArticlePagination·ArticleIndex (목록)
 features/hero/          Hero, Ring, Slot, reducer.ts, geometry.ts(링 좌표·충돌 계산), useDropTarget.ts
 content/                site.ts, keywords.ts, projects.ts
 content/articles/       아티클 {id}.md (frontmatter: id·title·kinds·stacks·date·excerpt). 이미지는 public/images/articles/{id}/
