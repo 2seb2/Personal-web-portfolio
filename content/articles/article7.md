@@ -4,7 +4,7 @@ title: "React, Vue, Next.js 등장 배경과 비교분석"
 kinds: ["스터디"]
 stacks: ["Next.js", "React", "Vue"]
 date: "2025-12-20"
-excerpt: "jQuery는 2006년에 등장한 JavaScript 라이브러리. 당시 웹 개발의 가장 큰 문제는 브라우저마다 JavaScript 동작이 달랐다..."
+excerpt: "jQuery 시대의 한계에서 출발해, React·Vue·Next.js가 각각 어떤 문제를 풀려고 등장했고 어떻게 다른지 비교했다."
 ---
 
 ## 프론트엔드 프레임워크의 등장 배경

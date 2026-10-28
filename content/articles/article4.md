@@ -4,7 +4,7 @@ title: "React Native"
 kinds: ["스터디"]
 stacks: ["ReactNative"]
 date: "2025-12-27"
-excerpt: "\"React Native is an open source framework for building Android and iOS applicati..."
+excerpt: "React 코드는 어떻게 iOS·Android의 네이티브 뷰가 될까. 카운터 앱으로 웹의 div와 Xcode의 UIView로 바뀌는 과정을 따라가 봤다."
 ---
 
 ## React Native란?

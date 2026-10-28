@@ -4,7 +4,7 @@ title: "CORS"
 kinds: ["스터디"]
 stacks: ["CORS"]
 date: "2026-04-08"
-excerpt: "브라우저가 다른 출처의 서버에 요청을 보낼 때, 서버가 그 요청을 허용했는지 확인하는 보안 메커니즘..."
+excerpt: "CORS 에러는 서버가 아니라 브라우저가 막는다. 동일 출처 정책이 생긴 이유부터 Preflight 요청, credentials 설정까지 정리했다."
 ---
 
 ## 1. 🗺️ 개념 지도 (Overview)
