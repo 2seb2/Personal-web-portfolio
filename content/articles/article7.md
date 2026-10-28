@@ -997,4 +997,3 @@ const [value, setValue] = useState('');
 
 > React · Vue · Next.js 모두 활발히 발전 중 -!
 프로젝트 요구사항과 팀 상황에 맞게 선택해서 사용하도록 하는 게 제일 중요!
->

@@ -26,7 +26,6 @@ UX가 사용자 경험이라면, DX는 개발자 경험이다.
 > "좋은 개발자 경험은 개발자에게 도움이 될 뿐만 아니라 
 효율성을 높이고 조직의 성과를 높이는 데 필수적입니다."
 — [개발자 경험(Dex)이 주목받는 시대 - 요즘IT](https://yozm.wishket.com/magazine/detail/1436/)
-> 
 
 ### 참고 자료
 
@@ -51,7 +50,6 @@ Vercel CEO 길레르모 로치의 말:
 
 > "우수한 개발자 경험은 개발자 생산성 향상으로 이어져 눈에 보이는 수익 창출 효과를 낸다."
 — [공감도 지능이다: 개발자의 마음을 얻는 8가지 방법 - CIO](https://www.cio.com/article/3524329/%EA%B3%B5%EA%B0%90%EB%8F%84-%EC%A7%80%EB%8A%A5%EC%9D%B4%EB%8B%A4-%EA%B0%9C%EB%B0%9C%EC%9E%90%EC%9D%98-%EB%A7%88%EC%9D%8C%EC%9D%84-%EC%96%BB%EB%8A%94-8%EA%B0%80%EC%A7%80-%EB%B0%A9%EB%B2%95.html)
-> 
 
 이런 인식이 퍼지면서 Vercel, 토스페이먼츠 같은 기업들은 
 DX 팀을 따로 만들어서 운영하고 있다고 한다.
@@ -85,7 +83,6 @@ AB180(에어브릿지) 팀의 실제 사례:
 
 > "기존에 210초 정도 걸리던 빌드가 esbuild로 2.16초만에 끝났습니다."
 — [Webpack → Vite: 번들러 마이그레이션 이야기 - AB180](https://engineering.ab180.co/stories/webpack-to-vite)
-> 
 
 | 측정 항목 | Webpack | Vite | 개선율 |
 | --- | --- | --- | --- |
@@ -210,7 +207,6 @@ React 문서는 "이 페이지에서는 여러분이 매일 사용하게 될 Rea
 
 > "기존 튜토리얼 문서는 줄글과 예제 코드가 선형적으로 보여지고, 각 연동 단계의 결과물이 어떤 지 알 수 없었어요. 이런 경험을 개선하기 위해 튜토리얼을 인터렉티브하게 바꿨어요."
 — [토스페이먼츠 - 개발자의 학습을 돕는 모든 것](https://velog.io/@tosspayments/%EA%B7%B8-%EB%A7%8E%EC%9D%80-%EA%B0%9C%EB%B0%9C-%EB%AC%B8%EC%84%9C%EB%8A%94-%EB%88%84%EA%B0%80-%EB%8B%A4-%EB%A7%8C%EB%93%A4%EC%97%88%EC%9D%84%EA%B9%8C-2-%EA%B0%9C%EB%B0%9C%EC%9E%90%EC%9D%98-%ED%95%99%EC%8A%B5%EC%9D%84-%EB%8F%95%EB%8A%94-%EB%AA%A8%EB%93%A0-%EA%B2%83)
-> 
 
 ### 나쁜 문서의 특징
 
@@ -277,7 +273,6 @@ Biome은 린팅이랑 포매팅을 하나로 합친 거라고 한다. 설정 파
 
 > "Lint 작업에서 ESLint: 16.32s, Biome: 0.79s로 약 **20배 더 빠른 성능**을 보여주었다."
 — [Biome가 ESLint와 Prettier를 대체할 수 있을까? - 후니네 개발하우스](https://hooninedev.com/241201/)
-> 
 
 ### Biome이 빠른 이유
 

@@ -33,7 +33,6 @@ excerpt: "\"React Native is an open source framework for building Android and iO
     
     > "The biggest mistake we made as a company was betting too much on HTML5 as opposed to native."
     — Mark Zuckerberg, 2012
-    > 
 
 Facebook은 처음에 모바일 앱을 HTML5 기반 하이브리드로 만들었음. 그런데 느리고 불안정함. 그래서 네이티브 앱으로 전환함.
 
@@ -223,7 +222,6 @@ React Native가 실행 시점에 각 플랫폼의 진짜 네이티브 UI 요소�
     
     > "To work with React Native, you will need to have an understanding of JavaScript fundamentals."
     — [React Native 공식 문서: Introduction](https://reactnative.dev/docs/getting-started)
-    > 
 
 **React Native를 하려면:** 
 

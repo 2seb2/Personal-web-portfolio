@@ -24,7 +24,6 @@ excerpt: "차트 라이브러리는 숫자 데이터를 시각적인 그래픽(�
     
     > "Chart.js is a free, open-source JavaScript library for data visualization, which supports eight chart types: bar, line, area, pie (doughnut), bubble, radar, polar, and scatter."
     — Chart.js 공식 문서: [Introduction](https://www.chartjs.org/docs/latest/)
-    > 
 
 : Chart.js는 8가지 차트 타입을 지원하는 무료 오픈소스 라이브러리임.
 
@@ -711,7 +710,6 @@ export default function App() {
     
     > 스크린샷에서 `constructor`가 447.1ms인 게 보임. 
     Chart.js가 새 차트를 만드는 과정 자체가 오래 걸리는 것.
-    > 
 
 ## 5. 실무 선택 기준
 
