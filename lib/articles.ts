@@ -30,6 +30,7 @@ export function parseArticle(fileName: string, raw: string): ArticleDetail {
   };
 
   if (data.id !== id) fail(`id(${String(data.id)})가 파일명과 다릅니다`);
+  if (data.pinned !== undefined && typeof data.pinned !== 'boolean') fail('pinned는 true 또는 false여야 합니다');
   const date = text('date');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) fail(`date(${date})는 YYYY-MM-DD 형식이어야 합니다`);
 
@@ -40,6 +41,7 @@ export function parseArticle(fileName: string, raw: string): ArticleDetail {
     kinds: list('kinds'),
     stacks: list('stacks'),
     excerpt: text('excerpt'),
+    pinned: data.pinned === true,
     body: content.trim(),
   };
 }
@@ -66,6 +68,7 @@ export function getArticles(): Article[] {
     kinds: article.kinds,
     stacks: article.stacks,
     excerpt: article.excerpt,
+    pinned: article.pinned,
   }));
 }
 
@@ -116,8 +119,10 @@ export function getArticleImages(article: Pick<ArticleDetail, 'title' | 'body'>)
   });
 }
 
-/** 목록 한 쪽에 보이는 글 수 */
-export const ARTICLES_PER_PAGE = 8;
+/** 목록 한 쪽에 보이는 카드 수 (1쪽은 Pinned 포함) */
+export const ARTICLES_PER_PAGE = 7;
+/** Pinned로 올릴 수 있는 최대 글 수 */
+export const MAX_PINNED_ARTICLES = 3;
 
 /** 목록 n쪽 주소 — 1쪽은 /articles, 나머지는 /articles/page/n */
 export function getArticlePageHref(page: number): string {
@@ -129,13 +134,27 @@ export function parseArticlePage(value: string): number | undefined {
   return /^[1-9]\d*$/.test(value) ? Number(value) : undefined;
 }
 
-/** n쪽에 보일 글과 전체 쪽 수. 없는 쪽이면 undefined */
-export function paginateArticles<T>(
+/**
+ * 목록 n쪽 구성 — 원칙은 docs/design-system.md '쪽 나누기 원칙'.
+ * 1쪽: Pinned(최신순, 최대 3편) + 날짜순 글로 남은 자리 채움. 2쪽부터: 날짜순 이어서 perPage개씩.
+ * 고정 글은 날짜순 목록에서 빼지 않는다. 없는 쪽이면 undefined.
+ * articles는 날짜순으로 정렬된 상태로 받는다(getArticles).
+ */
+export function getArticleListPage<T extends { pinned: boolean }>(
   articles: T[],
   page: number,
   perPage = ARTICLES_PER_PAGE,
-): { items: T[]; totalPages: number } | undefined {
-  const totalPages = Math.max(1, Math.ceil(articles.length / perPage));
+): { pinned: T[]; items: T[]; totalPages: number } | undefined {
+  const pinned = articles.filter((article) => article.pinned);
+  if (pinned.length > MAX_PINNED_ARTICLES) {
+    throw new Error(`Pinned 아티클은 최대 ${MAX_PINNED_ARTICLES}편입니다 (지금 ${pinned.length}편)`);
+  }
+  const firstPageSlots = perPage - pinned.length;
+  const rest = Math.max(0, articles.length - firstPageSlots);
+  const totalPages = 1 + Math.ceil(rest / perPage);
   if (!Number.isInteger(page) || page < 1 || page > totalPages) return undefined;
-  return { items: articles.slice((page - 1) * perPage, page * perPage), totalPages };
+
+  if (page === 1) return { pinned, items: articles.slice(0, firstPageSlots), totalPages };
+  const start = firstPageSlots + (page - 2) * perPage;
+  return { pinned: [], items: articles.slice(start, start + perPage), totalPages };
 }

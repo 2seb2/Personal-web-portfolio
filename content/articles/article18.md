@@ -5,6 +5,7 @@ kinds: ["스터디"]
 stacks: ["JavaScript"]
 date: "2026-01-10"
 excerpt: "숫자가 막대가 되기까지의 과정과 SVG·Canvas 렌더링 방식의 차이를, 데이터 개수를 늘려 가며 성능을 직접 재 보며 비교했다."
+pinned: true
 ---
 
 ## 1. 차트 라이브러리란?
