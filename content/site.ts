@@ -4,7 +4,7 @@ export const site = {
   name: 'SEBI.dev',
   author: '이세비',
   email: '2sebusiness.tech@gmail.com',
-  url: 'http://localhost:3000', // TODO(세비): 배포 후 Vercel 주소 / 도메인으로 교체
+  url: 'https://sebi-portfolio.vercel.app',
 
   metadata: {
     title: '이세비 · Frontend Developer',
