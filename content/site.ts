@@ -44,6 +44,10 @@ export const site = {
   /** 아티클 상세 */
   articleDetail: {
     back: '← All articles',
+    /** 본문 이미지 라이트박스 */
+    gallery: { title: 'Article Gallery', dialogLabel: '아티클 이미지 크게 보기' },
+    /** alt(캡션)가 빈 본문 이미지를 라이트박스·버튼에서 부르는 이름 */
+    imageAlt: (title: string, order: number) => `${title} 본문 이미지 ${order}`,
   },
 
   /** 프로젝트 상세 상단 외부 링크 아이콘 */

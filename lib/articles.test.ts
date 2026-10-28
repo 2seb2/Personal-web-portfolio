@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   formatArticleYear,
   getArticle,
-  getArticleImageSizes,
+  getArticleImages,
   getArticles,
   parseArticle,
   sortArticles,
@@ -85,23 +85,24 @@ describe('content/articles', () => {
   });
 });
 
-describe('getArticleImageSizes', () => {
-  it('본문 이미지 경로마다 크기를 한 번씩 읽는다', () => {
-    const body = '![](/images/articles/article11/01.webp)\n\n![캡션](/images/articles/article11/01.webp)';
-    expect(getArticleImageSizes(body)).toEqual({
-      '/images/articles/article11/01.webp': { width: 3022, height: 1572 },
-    });
+describe('getArticleImages', () => {
+  it('본문 순서대로 모으고, 캡션이 없으면 대체 이름을 붙인다', () => {
+    const body = '문단\n\n![](/images/articles/article11/01.webp)\n\n![캡션](/images/articles/article11/01.webp)';
+    expect(getArticleImages({ title: 'SDK', body })).toEqual([
+      { src: '/images/articles/article11/01.webp', alt: 'SDK 본문 이미지 1', caption: '', width: 3022, height: 1572, offset: 4 },
+      { src: '/images/articles/article11/01.webp', alt: '캡션', caption: '캡션', width: 3022, height: 1572, offset: 45 },
+    ]);
   });
 
   it('파일이 없으면 실패한다', () => {
-    expect(() => getArticleImageSizes('![](/images/articles/none/01.webp)')).toThrow(
+    expect(() => getArticleImages({ title: '', body: '![](/images/articles/none/01.webp)' })).toThrow(
       '아티클 이미지가 없습니다: public/images/articles/none/01.webp',
     );
   });
 
   it('모든 글의 본문 이미지가 실제로 있다', () => {
     for (const { id } of getArticles()) {
-      expect(() => getArticleImageSizes(getArticle(id)!.body)).not.toThrow();
+      expect(() => getArticleImages(getArticle(id)!)).not.toThrow();
     }
   });
 });

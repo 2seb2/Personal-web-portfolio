@@ -1,8 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
+import { site } from '@/content/site';
 import { readWebpSize } from '@/lib/webpSize';
-import type { Article, ArticleDetail, ArticleImageSizes } from '@/types/content';
+import type { Article, ArticleDetail, ArticleImage } from '@/types/content';
 
 const ARTICLES_DIR = path.join(process.cwd(), 'content/articles');
 
@@ -85,7 +86,7 @@ export function formatArticleYear(date: string): string {
  * 사전 렌더링을 막으므로 모듈을 불러올 때 한 번만 읽는다.
  */
 const IMAGES_DIR = path.join(process.cwd(), 'public/images/articles');
-const imageSizes: ArticleImageSizes = Object.fromEntries(
+const imageSizes: Record<string, { width: number; height: number }> = Object.fromEntries(
   fs
     .readdirSync(IMAGES_DIR, { recursive: true, encoding: 'utf8' })
     .filter((file) => file.endsWith('.webp'))
@@ -95,13 +96,21 @@ const imageSizes: ArticleImageSizes = Object.fromEntries(
     ]),
 );
 
-/** 본문 이미지(/images/…)의 크기 — 파일이 없으면 빌드를 멈춘다 */
-export function getArticleImageSizes(body: string): ArticleImageSizes {
-  const sizes: ArticleImageSizes = {};
-  for (const [, src] of body.matchAll(/!\[[^\]]*\]\((\/images\/[^)\s]+)\)/g)) {
+/**
+ * 본문 이미지를 화면 순서대로 모은다 — 라이트박스 갤러리 범위. 같은 파일을 두 번 쓰면 두 장으로 센다.
+ * 파일이 없으면 빌드를 멈춘다.
+ */
+export function getArticleImages(article: Pick<ArticleDetail, 'title' | 'body'>): ArticleImage[] {
+  return [...article.body.matchAll(/!\[([^\]]*)\]\((\/images\/[^)\s]+)\)/g)].map((match, i) => {
+    const [, caption, src] = match;
     const size = imageSizes[src];
     if (!size) throw new Error(`아티클 이미지가 없습니다: public${src}`);
-    sizes[src] = size;
-  }
-  return sizes;
+    return {
+      src,
+      alt: caption || site.articleDetail.imageAlt(article.title, i + 1),
+      caption,
+      ...size,
+      offset: match.index,
+    };
+  });
 }

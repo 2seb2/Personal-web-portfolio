@@ -93,5 +93,8 @@ export type Article = {
 /** 상세 페이지용 — frontmatter + Markdown 본문 */
 export type ArticleDetail = Article & { body: string };
 
-/** 본문 이미지 경로 → 크기 (next/image용) */
-export type ArticleImageSizes = Record<string, { width: number; height: number }>;
+/**
+ * 아티클 본문 이미지 — 화면 순서대로 라이트박스 갤러리가 된다.
+ * alt는 라이트박스·버튼 이름(캡션이 비면 대체 이름), offset은 Markdown 본문에서 `![`의 위치.
+ */
+export type ArticleImage = ProjectImage & { caption: string; offset: number };

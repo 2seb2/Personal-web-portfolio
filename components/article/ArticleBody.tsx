@@ -2,17 +2,19 @@ import Image from 'next/image';
 import Markdown, { type Components } from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
-import type { ArticleImageSizes } from '@/types/content';
+import { LightboxTrigger } from '@/features/lightbox/LightboxTrigger';
+import type { ArticleImage } from '@/types/content';
 
 type ArticleBodyProps = {
   body: string;
-  imageSizes: ArticleImageSizes;
+  /** getArticleImages — 화면 순서대로, 라이트박스 갤러리와 같은 순서 */
+  images: ArticleImage[];
 };
 
 /** 제목 안의 **굵게**는 주황 대신 제목 색 그대로 */
 const headingStrong = '[&_strong]:text-inherit';
 
-function createComponents(imageSizes: ArticleImageSizes): Components {
+function createComponents(images: ArticleImage[]): Components {
   return {
     h1: ({ children }) => <h2 className={`mt-11 first:mt-0 type-heading-md text-fg ${headingStrong}`}>{children}</h2>,
     h2: ({ children }) => <h2 className={`mt-11 first:mt-0 type-heading-md text-fg ${headingStrong}`}>{children}</h2>,
@@ -67,21 +69,25 @@ function createComponents(imageSizes: ArticleImageSizes): Components {
     ),
     td: ({ children }) => <td className="border border-line px-3 py-2 align-top">{children}</td>,
     hr: () => <hr className="mt-11 first:mt-0 border-line" />,
-    // 이미지는 문단(p) 안에 들어오므로 figure 대신 span으로 쌓는다
-    img: ({ src, alt }) => {
-      const size = typeof src === 'string' ? imageSizes[src] : undefined;
-      if (!size || typeof src !== 'string') return null;
+    // 이미지는 문단(p) 안에 들어오므로 figure 대신 span으로 쌓는다.
+    // 몇 번째 이미지인지는 Markdown 본문 위치(offset)로 찾는다 — 같은 파일을 두 번 써도 구분된다
+    img: ({ node }) => {
+      const index = images.findIndex((image) => image.offset === node?.position?.start.offset);
+      const image = images[index];
+      if (!image) return null;
       return (
-        <span className="flex flex-col gap-2">
-          <Image
-            src={src}
-            alt={alt ?? ''}
-            width={size.width}
-            height={size.height}
-            sizes="(min-width: 768px) 820px, 100vw"
-            className="h-auto max-w-full rounded-img"
-          />
-          {alt && <span className="type-mono-xs text-fg-muted">{alt}</span>}
+        <span className="flex flex-col items-start gap-2">
+          <LightboxTrigger index={index} alt={image.alt} className="w-fit max-w-full rounded-img">
+            <Image
+              src={image.src}
+              alt={image.caption}
+              width={image.width}
+              height={image.height}
+              sizes="(min-width: 768px) 820px, 100vw"
+              className="h-auto max-w-full rounded-img"
+            />
+          </LightboxTrigger>
+          {image.caption && <span className="type-mono-xs text-fg-muted">{image.caption}</span>}
         </span>
       );
     },
@@ -89,7 +95,7 @@ function createComponents(imageSizes: ArticleImageSizes): Components {
 }
 
 /** 아티클 Markdown 본문 — 서버에서 렌더링. 노션에서 옮긴 HTML 주석(TODO)은 화면에 내지 않는다 */
-export function ArticleBody({ body, imageSizes }: ArticleBodyProps) {
+export function ArticleBody({ body, images }: ArticleBodyProps) {
   return (
     <div>
       {/* 언어가 적힌 코드 블록만 강조 — 언어 없는 블록(트리·설명 텍스트)은 그대로 */}
@@ -97,7 +103,7 @@ export function ArticleBody({ body, imageSizes }: ArticleBodyProps) {
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[[rehypeHighlight, { detect: false }]]}
         skipHtml
-        components={createComponents(imageSizes)}
+        components={createComponents(images)}
       >
         {body}
       </Markdown>

@@ -3,9 +3,10 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { site } from '@/content/site';
-import { formatArticleYear, getArticle, getArticleImageSizes, getArticles } from '@/lib/articles';
+import { formatArticleYear, getArticle, getArticleImages, getArticles } from '@/lib/articles';
 import { ArticleBody } from '@/components/article/ArticleBody';
 import { Tag } from '@/components/ui/Tag';
+import { LightboxProvider } from '@/features/lightbox/LightboxProvider';
 
 export function generateStaticParams() {
   return getArticles().map((article) => ({ slug: article.id }));
@@ -46,8 +47,10 @@ async function ArticleDetailContent({ params }: Pick<PageProps<'/articles/[slug]
     notFound();
   }
 
+  const images = getArticleImages(article);
+
   return (
-    <>
+    <LightboxProvider images={images} labels={site.articleDetail.gallery}>
       <div className="flex flex-col pt-10 pb-9">
         <p className="type-mono-sm text-brand-text">{formatArticleYear(article.date)}</p>
         <h1 className="type-display-lg mt-3.5 text-fg">{article.title}</h1>
@@ -62,8 +65,8 @@ async function ArticleDetailContent({ params }: Pick<PageProps<'/articles/[slug]
       </div>
 
       <div className="border-t border-line pt-11 pb-11">
-        <ArticleBody body={article.body} imageSizes={getArticleImageSizes(article.body)} />
+        <ArticleBody body={article.body} images={images} />
       </div>
-    </>
+    </LightboxProvider>
   );
 }
