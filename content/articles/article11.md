@@ -4,7 +4,8 @@ title: "SDK를 이해해보자"
 kinds: ["스터디"]
 stacks: ["SDK"]
 date: "2026-01-03"
-excerpt: "SDK는 특정 시점에 갑자기 등장한 게 아니라, 소프트웨어 개발 환경이 복잡해지면서 자연스럽게 발전해온 개념! 지금 우리가 주로 사용하는 SDK..."
+excerpt: "라이브러리와 SDK는 무엇이 다를까? 카카오 SDK를 살펴보고, 이벤트를 모으는 미니 Analytics SDK를 직접 만들어 봤다."
+pinned: true
 ---
 
 ## 1. SDK의 등장 배경

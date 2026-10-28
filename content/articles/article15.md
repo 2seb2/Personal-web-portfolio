@@ -4,7 +4,7 @@ title: "JWT와 인증 전략"
 kinds: ["스터디"]
 stacks: ["JWT"]
 date: "2026-04-29"
-excerpt: "서버가 사용자의 로그인 상태를 어떻게 확인하고 유지하는지에 대한 전략..."
+excerpt: "로그인 상태는 어떻게 유지될까? JWT의 구조와 AccessToken·RefreshToken 전략, 토큰을 어디에 저장하느냐에 따른 차이를 비교했다."
 ---
 
 ## 1. 🗺️ 개념 지도 (Overview)

@@ -5,7 +5,7 @@ type TagProps = {
 };
 
 const toneClassName = {
-  brand: 'border-brand bg-brand/12 text-brand-text',
+  brand: 'border-brand/25 bg-brand/12 text-brand-text',
   neutral: 'border-line bg-sunken text-fg-secondary',
 };
 

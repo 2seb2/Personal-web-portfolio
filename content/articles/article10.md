@@ -4,7 +4,7 @@ title: "TS 타입시스템"
 kinds: ["스터디"]
 stacks: ["TypeScript"]
 date: "2026-03-30"
-excerpt: "TypeScript는 타입을 어떻게 정의하고(type·interface), 얼마나 엄격하게 검사할지(any·unknown·never), 타입 가..."
+excerpt: "type과 interface, any·unknown·never, 그리고 타입 가드까지. 타입을 정의하고 좁히는 TypeScript의 기본 규칙 정리"
 ---
 
 런타임은 코드가 실제로 실행되는 시점이고, 타입 가드는 그 실행 시점에 확인할 수 있는 조건문을 써서 TypeScript가 “여기서는 이 타입이 맞구나” 하고 더 구체적으로 판단하게 해주는 거야.

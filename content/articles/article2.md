@@ -4,7 +4,7 @@ title: "TCP vs UDP"
 kinds: ["스터디"]
 stacks: ["Network"]
 date: "2026-03-11"
-excerpt: "전송 계층(4계층)에서 데이터를 어떻게 전달할 것인지를 결정하는 두 프로토콜로, 신뢰성을 보장하는 TCP와 속도를 우선하는 UDP 중 상황에 맞..."
+excerpt: "신뢰성의 TCP, 속도의 UDP. 둘은 무엇이 다르고, HTTP/3는 왜 UDP 기반의 QUIC을 택했을까?"
 ---
 
 ## 1. 🗺️ 개념 지도 (Overview)

@@ -4,7 +4,7 @@ title: "브라우저에 URL을 입력하면 일어나는 일"
 kinds: ["스터디"]
 stacks: ["Network", "browser"]
 date: "2026-04-16"
-excerpt: "브라우저 주소창에 URL을 입력하면 DNS 조회 → 연결 수립 → HTTP 요청/응답 → 브라우저 렌더링 순서로 화면이 표시된다..."
+excerpt: "주소창에 URL을 입력하고 화면이 뜨기까지. DNS 조회부터 TCP·TLS 연결, HTTP 요청, 렌더링까지 한 흐름으로 따라가 봤다."
 ---
 
 ## 1. 🗺️ 개념 지도 (Overview)

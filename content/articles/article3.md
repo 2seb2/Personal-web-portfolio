@@ -4,7 +4,7 @@ title: "페이지 생명주기와 데이터 전송 관련브라우저 API"
 kinds: ["스터디"]
 stacks: ["Browser API"]
 date: "2026-01-17"
-excerpt: "\"자주 쓰지는 않지만, 알면 유용한\" 브라우저 API 몇 가지를 알아봄. 특히 페이지 생명주기와 데이터 전송에 관련된 API들: 이 API들은..."
+excerpt: "탭을 숨기거나 닫는 순간에도 데이터를 놓치지 않으려면? Page Visibility·Lifecycle API와 Beacon API를 실습하며 살펴본 기록."
 ---
 
 ## 1. 오늘 다룰 브라우저 API들

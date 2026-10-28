@@ -4,7 +4,7 @@ export const site = {
   name: 'SEBI.dev',
   author: '이세비',
   email: '2sebusiness.tech@gmail.com',
-  url: 'http://localhost:3000', // TODO(세비): 배포 후 Vercel 주소 / 도메인으로 교체
+  url: 'https://sebi-portfolio.vercel.app',
 
   metadata: {
     title: '이세비 · Frontend Developer',
@@ -39,6 +39,16 @@ export const site = {
   pages: {
     projects: { title: '프로젝트', description: '직접 써보며 끊기는 지점을 찾아 다듬은 프로젝트 4개입니다.' },
     articles: { title: '아티클', description: '만들면서 배운 것과 회고를 기록합니다.' },
+  },
+
+  /** 아티클 목록 쪽 나누기 */
+  articleList: {
+    pageTitle: (page: number) => `아티클 ${page}쪽`,
+    pinned: 'Pinned',
+    pagination: '아티클 목록 쪽',
+    prev: '이전',
+    next: '다음',
+    page: (page: number) => `${page}쪽`,
   },
 
   /** 아티클 상세 */

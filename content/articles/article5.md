@@ -4,7 +4,7 @@ title: "DX(Developer Experience) 개선이란"
 kinds: ["스터디"]
 stacks: ["DX"]
 date: "2026-02-16"
-excerpt: "DX(Developer Experience)는 쉽게 말하면 \"이 도구 쓸 때 얼마나 편하냐\"의 문제라고 할 수 있다. 개발자가 도구, 플랫폼..."
+excerpt: "빌드 속도, 에러 메시지, 문서, 타입 지원까지. 개발할 때 덜 고통받게 해 주는 도구의 조건을 Vite와 Biome 사례로 짚어 봤다."
 ---
 
 ## 1. DX란?

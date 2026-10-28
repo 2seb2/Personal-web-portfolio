@@ -4,7 +4,7 @@ title: "컴포넌트 렌더 전 데이터 로더(Loader)"
 kinds: ["스터디"]
 stacks: ["React Router"]
 date: "2026-01-31"
-excerpt: "React에서 데이터를 가져오는 가장 흔한 방식은 useEffect 안에서 fetch하는 것임. 이 방식은 동작하지만 몇 가지 문제가 있음. 이..."
+excerpt: "useEffect로 데이터를 가져올 때 생기는 문제와, 렌더 전에 데이터를 준비하는 React Router Loader를 언제 쓰면 좋은지에 대한 정리"
 ---
 
 <!-- TODO: 변환 못 한 블록 (목차) -->
