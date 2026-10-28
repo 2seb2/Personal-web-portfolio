@@ -3,7 +3,7 @@ id: "article5"
 title: "DX(Developer Experience) 개선이란"
 kinds: ["스터디"]
 stacks: ["DX"]
-date: "2025"   # TODO(세비): 실제 날짜 확인
+date: "2025-01-01"   # TODO(세비): 실제 날짜 확인
 excerpt: "DX(Developer Experience)는 쉽게 말하면 \"이 도구 쓸 때 얼마나 편하냐\"의 문제라고 할 수 있다. 개발자가 도구, 플랫폼..."
 ---
 

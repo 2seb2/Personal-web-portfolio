@@ -3,7 +3,7 @@ id: "article3"
 title: "페이지 생명주기와 데이터 전송 관련브라우저 API"
 kinds: ["스터디"]
 stacks: ["Browser API"]
-date: "2025"   # TODO(세비): 실제 날짜 확인
+date: "2025-01-01"   # TODO(세비): 실제 날짜 확인
 excerpt: "\"자주 쓰지는 않지만, 알면 유용한\" 브라우저 API 몇 가지를 알아봄. 특히 페이지 생명주기와 데이터 전송에 관련된 API들: 이 API들은..."
 ---
 

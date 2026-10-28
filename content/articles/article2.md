@@ -3,7 +3,7 @@ id: "article2"
 title: "TCP vs UDP"
 kinds: ["스터디"]
 stacks: ["Network"]
-date: "2025"   # TODO(세비): 실제 날짜 확인
+date: "2025-01-01"   # TODO(세비): 실제 날짜 확인
 excerpt: "전송 계층(4계층)에서 데이터를 어떻게 전달할 것인지를 결정하는 두 프로토콜로, 신뢰성을 보장하는 TCP와 속도를 우선하는 UDP 중 상황에 맞..."
 ---
 

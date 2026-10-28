@@ -75,12 +75,23 @@ export type Project = {
   detail?: ProjectDetail;
 };
 
-// ---------- Articles (목데이터. 노션 연동은 후순위) ----------
+// ---------- Articles (content/articles/{id}.md의 frontmatter) ----------
 export type Article = {
+  /** 파일명과 같다. 상세 URL /articles/{id} */
   id: string;
   title: string;
-  date: string; // YYYY.MM.DD
-  tags: string[];
+  /** YYYY-MM-DD. 화면에는 연도만 표시 */
+  date: string;
+  /** 노션 '종류' — 회색 태그 */
+  kinds: string[];
+  /** 노션 '기술 스택' — 주황 태그 */
+  stacks: string[];
+  /** 목록 카드 요약 */
   excerpt: string;
-  href?: string;
 };
+
+/** 상세 페이지용 — frontmatter + Markdown 본문 */
+export type ArticleDetail = Article & { body: string };
+
+/** 본문 이미지 경로 → 크기 (next/image용) */
+export type ArticleImageSizes = Record<string, { width: number; height: number }>;

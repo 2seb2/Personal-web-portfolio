@@ -3,7 +3,7 @@ id: "article16"
 title: "React Fiber & 동시성"
 kinds: ["스터디"]
 stacks: ["React"]
-date: "2025"   # TODO(세비): 실제 날짜 확인
+date: "2025-01-01"   # TODO(세비): 실제 날짜 확인
 excerpt: "React는 Fiber 아키텍처로 렌더링 작업을 작은 단위로 나눠 중단·재개할 수 있게 하고, 내부 Scheduler와 Lane 기반 우선순위로..."
 ---
 

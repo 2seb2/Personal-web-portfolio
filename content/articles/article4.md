@@ -3,7 +3,7 @@ id: "article4"
 title: "React Native"
 kinds: ["스터디"]
 stacks: ["ReactNative"]
-date: "2025"   # TODO(세비): 실제 날짜 확인
+date: "2025-01-01"   # TODO(세비): 실제 날짜 확인
 excerpt: "\"React Native is an open source framework for building Android and iOS applicati..."
 ---
 

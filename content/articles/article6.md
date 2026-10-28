@@ -3,7 +3,7 @@ id: "article6"
 title: "컴포넌트 렌더 전 데이터 로더(Loader)"
 kinds: ["스터디"]
 stacks: ["React Router"]
-date: "2025"   # TODO(세비): 실제 날짜 확인
+date: "2025-01-01"   # TODO(세비): 실제 날짜 확인
 excerpt: "React에서 데이터를 가져오는 가장 흔한 방식은 useEffect 안에서 fetch하는 것임. 이 방식은 동작하지만 몇 가지 문제가 있음. 이..."
 ---
 

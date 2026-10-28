@@ -3,7 +3,7 @@ id: "article8"
 title: "this 바인딩"
 kinds: ["스터디"]
 stacks: ["JavaScript"]
-date: "2025"   # TODO(세비): 실제 날짜 확인
+date: "2025-01-01"   # TODO(세비): 실제 날짜 확인
 excerpt: "this는 함수가 어떻게 정의됐는지가 아니라, 어떻게 호출됐는지에 따라 달라지는 동적인 참조값이다..."
 ---
 
