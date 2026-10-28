@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { site } from '@/content/site';
-import { getArticles, paginateArticles } from '@/lib/articles';
+import { getArticleListPage, getArticles } from '@/lib/articles';
 import { ArticleIndex } from '@/components/article/ArticleIndex';
 import { ArticleList } from '@/components/article/ArticleList';
 import { ArticlePagination } from '@/components/article/ArticlePagination';
@@ -11,11 +11,11 @@ export const metadata: Metadata = {
 };
 
 export default function ArticlesPage() {
-  const { items, totalPages } = paginateArticles(getArticles(), 1)!;
+  const { pinned, items, totalPages } = getArticleListPage(getArticles(), 1)!;
 
   return (
     <ArticleIndex>
-      <ArticleList articles={items} />
+      <ArticleList pinned={pinned} articles={items} />
       <ArticlePagination page={1} totalPages={totalPages} />
     </ArticleIndex>
   );

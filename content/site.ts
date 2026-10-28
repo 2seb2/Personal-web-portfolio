@@ -44,6 +44,7 @@ export const site = {
   /** 아티클 목록 쪽 나누기 */
   articleList: {
     pageTitle: (page: number) => `아티클 ${page}쪽`,
+    pinned: 'Pinned',
     pagination: '아티클 목록 쪽',
     prev: '이전',
     next: '다음',
