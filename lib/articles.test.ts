@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  formatArticleYear,
+  formatArticleDate,
   getArticle,
   getArticleImages,
   getArticles,
@@ -66,9 +66,10 @@ describe('sortArticles', () => {
   });
 });
 
-describe('formatArticleYear', () => {
-  it('연도만 남긴다', () => {
-    expect(formatArticleYear('2025-09-01')).toBe('2025');
+describe('formatArticleDate', () => {
+  it('"YYYY년 M월 D일"로, 월·일 앞의 0은 뺀다', () => {
+    expect(formatArticleDate('2026-03-09')).toBe('2026년 3월 9일');
+    expect(formatArticleDate('2025-12-27')).toBe('2025년 12월 27일');
   });
 });
 

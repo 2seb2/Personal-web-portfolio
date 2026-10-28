@@ -3,7 +3,7 @@ id: "article7"
 title: "React, Vue, Next.js 등장 배경과 비교분석"
 kinds: ["스터디"]
 stacks: ["Next.js", "React", "Vue"]
-date: "2025-01-01"   # TODO(세비): 실제 날짜 확인
+date: "2025-12-20"
 excerpt: "jQuery는 2006년에 등장한 JavaScript 라이브러리. 당시 웹 개발의 가장 큰 문제는 브라우저마다 JavaScript 동작이 달랐다..."
 ---
 

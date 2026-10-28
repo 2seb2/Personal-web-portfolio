@@ -80,7 +80,7 @@ export type Article = {
   /** 파일명과 같다. 상세 URL /articles/{id} */
   id: string;
   title: string;
-  /** YYYY-MM-DD. 화면에는 연도만 표시 */
+  /** YYYY-MM-DD. 화면에는 "2026년 3월 9일" */
   date: string;
   /** 노션 '종류' — 회색 태그 */
   kinds: string[];

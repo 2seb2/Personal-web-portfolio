@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { site } from '@/content/site';
-import { formatArticleYear, getArticle, getArticleImages, getArticles } from '@/lib/articles';
+import { formatArticleDate, getArticle, getArticleImages, getArticles } from '@/lib/articles';
 import { ArticleBody } from '@/components/article/ArticleBody';
 import { Tag } from '@/components/ui/Tag';
 import { LightboxProvider } from '@/features/lightbox/LightboxProvider';
@@ -52,7 +52,7 @@ async function ArticleDetailContent({ params }: Pick<PageProps<'/articles/[slug]
   return (
     <LightboxProvider images={images} labels={site.articleDetail.gallery}>
       <div className="flex flex-col pt-10 pb-9">
-        <p className="type-mono-sm text-brand-text">{formatArticleYear(article.date)}</p>
+        <p className="type-mono-sm text-brand-text">{formatArticleDate(article.date)}</p>
         <h1 className="type-display-lg mt-3.5 text-fg">{article.title}</h1>
         <div className="mt-4.5 flex flex-wrap gap-1.5">
           {article.kinds.map((kind) => (

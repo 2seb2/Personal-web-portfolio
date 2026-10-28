@@ -76,9 +76,10 @@ export function getArticle(id: string): ArticleDetail | undefined {
   return parseArticle(`${id}.md`, fs.readFileSync(file, 'utf8'));
 }
 
-/** 화면에는 연도만 — "2025-01-01" → "2025" */
-export function formatArticleYear(date: string): string {
-  return date.slice(0, 4);
+/** 화면 표시용 — "2026-03-09" → "2026년 3월 9일" */
+export function formatArticleDate(date: string): string {
+  const [year, month, day] = date.split('-').map(Number);
+  return `${year}년 ${month}월 ${day}일`;
 }
 
 /**

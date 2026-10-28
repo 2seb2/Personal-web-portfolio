@@ -117,6 +117,6 @@ Figma `v2 — Design System` 섹션(node `156:1505`)의 요약. 값은 `styles/t
 - 다음 프로젝트 카드: 열 폭 100%, `rounded-next`, 테두리 `line`, 라벨 `type-mono-sm brand-text`, 제목 `type-heading-md`
 
 ### 아티클 상세 (Figma `237:1847` / `240:1864`)
-- 헤더: 연도 `type-mono-sm brand-text` → 제목 `type-display-lg`(위 14) → 태그(위 18, 간격 6, 종류 neutral 먼저 · 기술 스택 brand) → 아래 36 뒤 구분선 `line`
+- 헤더: 날짜("2026년 3월 9일") `type-mono-sm brand-text` → 제목 `type-display-lg`(위 14) → 태그(위 18, 간격 6, 종류 neutral 먼저 · 기술 스택 brand) → 아래 36 뒤 구분선 `line`
 - 본문(`components/article/ArticleBody.tsx`, 위 44 · 아래 44): `##` `type-heading-md`(위 44), `###` `type-body-md-strong`(위 32), `####` `type-body-md-strong fg-secondary`(위 24), 문단 `type-body-md fg-strong`(위 12), 굵게 `brand-text`(제목 안에서는 제목 색), 인용은 상세 인용 박스와 같음
 - Figma에 없는 요소(코드에서 먼저 정함): 코드 블록 `bg-sunken rounded-img` 패딩 16·18 `type-mono-sm` + 문법 강조(언어가 적힌 블록만, rehype-highlight → `app/globals.css`의 `.hljs-*`): 키워드·JSX 태그 `--sebi-code-keyword`(라이트 #B35100 · 다크 #F49303), 주석 `--sebi-code-comment`(#3D7A4A · #8CC08F), 문자열 `--sebi-code-string`(#1F5F99 · #8CB8E0), 숫자·true·null `--sebi-code-literal`(#7A3FA8 · #C3A0E3) — 모두 bg-sunken 위 4.5:1↑, 인라인 코드 `bg-sunken` 좌우 4 `type-mono-sm`, 표 테두리 `line`·머리글 `bg-sunken type-body-sm-strong`·본문 `type-body-sm`, 이미지 원본 크기(열 폭까지) `rounded-img` + 캡션 `type-mono-xs fg-muted`

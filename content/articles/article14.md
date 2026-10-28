@@ -3,7 +3,7 @@ id: "article14"
 title: "브라우저에 URL을 입력하면 일어나는 일"
 kinds: ["스터디"]
 stacks: ["Network", "browser"]
-date: "2025-01-01"   # TODO(세비): 실제 날짜 확인
+date: "2026-04-16"
 excerpt: "브라우저 주소창에 URL을 입력하면 DNS 조회 → 연결 수립 → HTTP 요청/응답 → 브라우저 렌더링 순서로 화면이 표시된다..."
 ---
 

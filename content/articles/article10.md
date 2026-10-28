@@ -3,7 +3,7 @@ id: "article10"
 title: "TS 타입시스템"
 kinds: ["스터디"]
 stacks: ["TypeScript"]
-date: "2025-01-01"   # TODO(세비): 실제 날짜 확인
+date: "2026-03-30"
 excerpt: "TypeScript는 타입을 어떻게 정의하고(type·interface), 얼마나 엄격하게 검사할지(any·unknown·never), 타입 가..."
 ---
 

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { site } from '@/content/site';
-import { formatArticleYear, getArticles } from '@/lib/articles';
+import { formatArticleDate, getArticles } from '@/lib/articles';
 import { Tag } from '@/components/ui/Tag';
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function ArticlesPage() {
             className="flex flex-col rounded-card border border-line bg-surface p-5.5"
           >
             <p className="type-body-sm-strong text-fg">{article.title}</p>
-            <p className="type-mono-xs mt-1 text-fg-secondary">{formatArticleYear(article.date)}</p>
+            <p className="type-mono-xs mt-1 text-fg-secondary">{formatArticleDate(article.date)}</p>
             <div className="mt-1 flex flex-wrap gap-2">
               {article.kinds.map((kind) => (
                 <Tag key={`kind-${kind}`} label={kind} tone="neutral" />
