@@ -8,6 +8,7 @@ type LightboxTriggerProps = {
   /** 갤러리(getProjectImages) 안에서의 순서 */
   index: number;
   alt: string;
+  /** 폭 포함 — 프로젝트 이미지는 w-full, 아티클 이미지는 이미지 크기만큼 */
   className?: string;
   /** 서버에서 렌더링한 본문 이미지 — 크기·배치는 그대로 두고 감싸기만 한다 */
   children: ReactNode;
@@ -23,7 +24,7 @@ export function LightboxTrigger({ index, alt, className, children }: LightboxTri
       aria-label={site.lightbox.open(alt)}
       aria-haspopup="dialog"
       onClick={(event) => lightbox?.open(index, event.currentTarget)}
-      className={`block w-full cursor-zoom-in text-left ${className ?? ''}`}
+      className={`block cursor-zoom-in text-left ${className ?? ''}`}
     >
       {children}
     </button>

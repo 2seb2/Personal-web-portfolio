@@ -45,7 +45,7 @@ export function ProjectSection({ section, imageStartIndex, titleAside }: Project
       ))}
 
       {section.image?.map((image, i) => (
-        <LightboxTrigger key={i} index={imageStartIndex + i} alt={image.alt} className="mt-3 rounded-img">
+        <LightboxTrigger key={i} index={imageStartIndex + i} alt={image.alt} className="mt-3 w-full rounded-img">
           <span className="relative block w-full overflow-hidden rounded-img bg-sunken">
             <Image
               src={image.src}

@@ -67,7 +67,7 @@ async function ProjectDetailContent({
         <p className="type-body-lg mt-3.5 text-fg-secondary">{detail.summary}</p>
       </div>
 
-      <LightboxTrigger index={0} alt={detail.heroImage.alt} className="rounded-media">
+      <LightboxTrigger index={0} alt={detail.heroImage.alt} className="w-full rounded-media">
         <span className="relative block w-full overflow-hidden rounded-media border border-line bg-surface">
           <Image
             src={detail.heroImage.src}
