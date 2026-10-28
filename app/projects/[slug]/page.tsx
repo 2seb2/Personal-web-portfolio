@@ -5,6 +5,7 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import { getProjects, getProject, getNextProject, getProjectImages } from '@/lib/projects';
 import { ProjectSection } from '@/components/project/ProjectSection';
+import { ProjectLinks } from '@/components/project/ProjectLinks';
 import { LightboxProvider } from '@/features/lightbox/LightboxProvider';
 import { LightboxTrigger } from '@/features/lightbox/LightboxTrigger';
 import type { ProjectSlug } from '@/types/content';
@@ -97,7 +98,12 @@ async function ProjectDetailContent({
 
       <div className="flex flex-col">
         {detail.sections.map((section, i) => (
-          <ProjectSection key={i} section={section} imageStartIndex={sectionStarts[i]} />
+          <ProjectSection
+            key={i}
+            section={section}
+            imageStartIndex={sectionStarts[i]}
+            titleAside={section.title === 'Overview' && <ProjectLinks links={project.links} />}
+          />
         ))}
       </div>
 

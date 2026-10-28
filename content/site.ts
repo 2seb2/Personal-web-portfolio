@@ -41,6 +41,12 @@ export const site = {
     articles: { title: '아티클', description: '만들면서 배운 것과 회고를 기록합니다.' },
   },
 
+  /** 프로젝트 상세 상단 외부 링크 아이콘 */
+  projectLinks: {
+    github: 'GitHub 저장소 열기',
+    notion: 'Notion 문서 열기',
+  },
+
   /** 프로젝트 상세 이미지 라이트박스 */
   lightbox: {
     title: 'Project Gallery',
