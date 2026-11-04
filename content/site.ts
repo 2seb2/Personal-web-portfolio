@@ -94,7 +94,7 @@ export const site = {
         label: 'LinkedIn',
         href: 'https://www.linkedin.com/in/%EC%84%B8%EB%B9%84-%EC%9D%B4-6b6653403/?isSelfProfile=true',
       },
-      { label: '이력서', href: '/LeeSebi-resume.pdf' },
+      { label: '이력서', href: '/LeeSebi_Resume(portfolio.ver).pdf' },
     ],
     // TODO(세비): 임시 문구 — 확정 필요 (레퍼런스 사이트 문구와 겹치지 않게 바꿔 둔 것)
     copyright: '© 2026 이세비 — Figma에서 그리고, 코드로 만들고, 다시 써보며 다듬었습니다.',
